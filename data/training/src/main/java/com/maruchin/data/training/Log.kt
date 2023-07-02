@@ -34,3 +34,26 @@ data class Log(
         active = false,
     )
 }
+
+val sampleLog = Log(name = "Q1 2023", plan = samplePlan).let { log ->
+    log.copy(
+        weeks = log.weeks.map { week ->
+            week.copy(
+                days = week.days.map { day ->
+                    day.copy(
+                        exercises = day.exercises.map { exercise ->
+                            exercise.copy(
+                                exerciseSets = exercise.exerciseSets.map { set ->
+                                    set.copy(
+                                        weight = 62.5f,
+                                        reps = 10
+                                    )
+                                }
+                            )
+                        }
+                    )
+                }
+            )
+        }
+    )
+}

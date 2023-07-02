@@ -137,7 +137,7 @@ private fun MyTrainingLogView(name: String, onClick: () -> Unit, onLongClick: ()
         )
         Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
     }
-    Divider()
+    Divider(modifier = Modifier.padding(horizontal = 16.dp))
 }
 
 @Preview

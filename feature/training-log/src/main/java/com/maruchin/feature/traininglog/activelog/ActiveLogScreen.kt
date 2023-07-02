@@ -1,24 +1,21 @@
 package com.maruchin.feature.traininglog.activelog
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -36,15 +34,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.maruchin.core.model.ID
-import com.maruchin.core.ui.ContentPlaceholder
 import com.maruchin.core.ui.GymsterTheme
 import com.maruchin.core.ui.VerticalDivider
+import com.maruchin.core.ui.content.ContentLoadingView
 import com.maruchin.data.training.Exercise
 import com.maruchin.data.training.Log
 import com.maruchin.data.training.ExerciseSet
 import com.maruchin.data.training.TrainingDay
 import com.maruchin.data.training.TrainingWeek
+import com.maruchin.data.training.sampleLog
 import com.maruchin.data.training.samplePlan
 import com.maruchin.feature.activelog.R
 import kotlinx.coroutines.launch
@@ -57,21 +55,20 @@ internal fun ActiveLogScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(logName = state.log?.name, onSelectLog = onSelectLog)
+            TopAppBar(
+                logName = (state as? ActiveLogUiState.Success)?.log?.name,
+                onSelectLog = onSelectLog
+            )
         }
     ) { padding ->
-        if (state.log == null) {
-            ContentPlaceholder(
-                icon = Icons.Default.FitnessCenter,
-                text = stringResource(R.string.logs_placeholder),
-                modifier = Modifier.padding(padding)
-            )
-        } else {
-            WeeksView(
-                weeks = state.log.weeks,
-                onEditExerciseSet = onEditExerciseSet,
-                modifier = Modifier.padding(padding)
-            )
+        Crossfade(state, modifier = Modifier.padding(padding)) {
+            when (it) {
+                ActiveLogUiState.Loading -> ContentLoadingView()
+                is ActiveLogUiState.Success -> WeeksView(
+                    weeks = it.log.weeks,
+                    onEditExerciseSet = onEditExerciseSet
+                )
+            }
         }
     }
 }
@@ -84,7 +81,7 @@ private fun TopAppBar(logName: String?, onSelectLog: () -> Unit) {
         },
         actions = {
             SelectLogButton(onClick = onSelectLog)
-        }
+        },
     )
 }
 
@@ -179,7 +176,7 @@ private fun TrainingWeekView(days: List<TrainingDay>, onEditExerciseSet: (Exerci
 }
 
 @Composable
-private fun ColumnScope.TrainingDayView(
+private fun TrainingDayView(
     name: String,
     exercises: List<Exercise>,
     onEditExerciseSet: (ExerciseSet) -> Unit,
@@ -187,70 +184,86 @@ private fun ColumnScope.TrainingDayView(
     Text(
         text = name,
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(top = 40.dp)
     )
     exercises.forEach { exercise ->
         ExerciseView(
             number = exercise.number,
             name = exercise.name,
             repsRange = exercise.repsRange,
+        )
+        ExerciseSetsView(
             exerciseSets = exercise.exerciseSets,
-            onEditExerciseSet = onEditExerciseSet,
+            onEditExerciseSet = onEditExerciseSet
         )
     }
 }
 
 @Composable
-private fun ColumnScope.ExerciseView(
+private fun ExerciseView(
     number: String,
     name: String,
     repsRange: IntRange,
-    exerciseSets: List<ExerciseSet>,
-    onEditExerciseSet: (ExerciseSet) -> Unit,
 ) {
-    Row(modifier = Modifier.padding(16.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 8.dp, top = 24.dp)
+    ) {
         Text(
-            text = number,
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.width(40.dp)
-        )
-        Text(
-            text = name,
+            text = "$number - $name",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
         Text(
             text = repsRange.toString(),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.labelLarge
         )
     }
-    Divider(modifier = Modifier.padding(horizontal = 16.dp))
-    Row(
-        modifier = Modifier
-            .height(IntrinsicSize.Min)
-            .padding(horizontal = 16.dp)
-    ) {
-        VerticalDivider()
-        exerciseSets.forEach { set ->
-            Text(
-                text = set.weight?.let { weight ->
-                    set.reps?.let { reps ->
-                        "$weight x $reps"
-                    }
-                } ?: "--",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onEditExerciseSet(set) }
-                    .padding(16.dp)
-            )
-            VerticalDivider()
-        }
-    }
-    Divider(modifier = Modifier.padding(horizontal = 16.dp))
 }
 
+@Composable
+private fun ExerciseSetsView(
+    exerciseSets: List<ExerciseSet>,
+    onEditExerciseSet: (ExerciseSet) -> Unit
+) {
+    Card(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+            exerciseSets.forEachIndexed { index, set ->
+                ExerciseSetView(
+                    weight = set.weight,
+                    reps = set.reps,
+                    onEdit = { onEditExerciseSet(set) },
+                    modifier = Modifier.weight(1f)
+                )
+                if (index != exerciseSets.lastIndex) {
+                    VerticalDivider()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseSetView(
+    weight: Float?,
+    reps: Int?,
+    onEdit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = if (weight != null && reps != null) "$weight x $reps" else "--",
+        style = MaterialTheme.typography.bodyMedium,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .clickable { onEdit() }
+            .padding(vertical = 16.dp)
+            .then(modifier)
+    )
+}
 
 @Preview
 @Composable
@@ -266,11 +279,10 @@ private fun ActiveLogScreenPreview(
     }
 }
 
-class UiStateProvider : PreviewParameterProvider<ActiveLogUiState> {
+private class UiStateProvider : PreviewParameterProvider<ActiveLogUiState> {
     override val values = sequenceOf(
-        ActiveLogUiState(),
-        ActiveLogUiState(
-            log = Log(name = "Q1 2023", plan = samplePlan)
-        )
+        ActiveLogUiState.Loading,
+        ActiveLogUiState.Success(log = Log(name = "Q1 2023", plan = samplePlan)),
+        ActiveLogUiState.Success(log = sampleLog)
     )
 }
