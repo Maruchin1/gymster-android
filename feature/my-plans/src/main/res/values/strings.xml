@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_plans">Moje plany</string>
+    <string name="create_new_log">Utwórz nowy dziennik</string>
+    <string name="log_name">Nazwa dziennika</string>
+    <string name="confirm">Potwierdź</string>
+    <string name="new_log_created">Utworzono nowy trening</string>
+</resources>

@@ -1,0 +1,32 @@
+plugins {
+    id 'com.android.application'
+    id 'gymster.android-conventions'
+    id 'gymster.compose-conventions'
+    id 'gymster.room-conventions'
+}
+
+android {
+    namespace 'com.maruchin.gymster'
+
+    defaultConfig {
+        applicationId "com.maruchin.gymster"
+        versionCode 1
+        versionName "1.0"
+
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':feature:training-log')
+    implementation project(':feature:my-plans')
+    implementation project(':data:training')
+    implementation project(':core:ui')
+}
