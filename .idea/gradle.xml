@@ -18,8 +18,8 @@
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data/training" />
             <option value="$PROJECT_DIR$/feature" />
-            <option value="$PROJECT_DIR$/feature/my-plans" />
-            <option value="$PROJECT_DIR$/feature/training-log" />
+            <option value="$PROJECT_DIR$/feature/training-logs" />
+            <option value="$PROJECT_DIR$/feature/training-plans" />
           </set>
         </option>
       </GradleProjectSettings>

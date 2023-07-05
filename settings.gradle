@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 rootProject.name = "gymster"
 include ':app'
 include ':data:training'
-include ':feature:my-plans'
+include ':feature:training-plans'
 include ':core:ui'
 include ':core:model'
-include ':feature:training-log'
+include ':feature:training-logs'

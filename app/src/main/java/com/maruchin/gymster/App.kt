@@ -20,12 +20,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.maruchin.feature.planlist.MY_PLANS_ROUTE
-import com.maruchin.feature.planlist.myPlansGraph
-import com.maruchin.feature.planlist.navigateToMyPlans
-import com.maruchin.feature.traininglog.TRAINING_LOG_ROUTE
-import com.maruchin.feature.traininglog.navigateToTrainingLog
-import com.maruchin.feature.traininglog.trainingLogGraph
+import com.maruchin.feature.trainingplans.MY_PLANS_ROUTE
+import com.maruchin.feature.trainingplans.myPlansGraph
+import com.maruchin.feature.trainingplans.navigateToMyPlans
+import com.maruchin.feature.traininglogs.TRAINING_LOG_ROUTE
+import com.maruchin.feature.traininglogs.navigateToTrainingLog
+import com.maruchin.feature.traininglogs.trainingLogGraph
 
 @Composable
 internal fun App() {
