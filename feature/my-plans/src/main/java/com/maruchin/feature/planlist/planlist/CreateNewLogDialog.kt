@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.maruchin.core.ui.GymsterTheme
+import com.maruchin.core.ui.theme.GymsterTheme
 import com.maruchin.feature.planlist.R
 
 @Composable

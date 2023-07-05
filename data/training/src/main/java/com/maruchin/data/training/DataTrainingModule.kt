@@ -3,6 +3,14 @@ package com.maruchin.data.training
 import android.content.Context
 import androidx.room.Room
 import com.maruchin.data.training.database.TrainingDatabase
+import com.maruchin.data.training.repository.DefaultExerciseSetRepository
+import com.maruchin.data.training.repository.DefaultTrainingLogRepository
+import com.maruchin.data.training.repository.DefaultTrainingPlanRepository
+import com.maruchin.data.training.repository.DefaultTrainingDayRepository
+import com.maruchin.data.training.repository.ExerciseSetRepository
+import com.maruchin.data.training.repository.TrainingLogRepository
+import com.maruchin.data.training.repository.TrainingPlanRepository
+import com.maruchin.data.training.repository.TrainingDayRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -16,10 +24,13 @@ import javax.inject.Singleton
 internal interface DataTrainingModule {
 
     @Binds
-    fun trainingPlanRepository(impl: DefaultPlanRepository): PlanRepository
+    fun trainingPlanRepository(impl: DefaultTrainingPlanRepository): TrainingPlanRepository
 
     @Binds
-    fun trainingLogRepository(impl: DefaultLogRepository): LogRepository
+    fun trainingLogRepository(impl: DefaultTrainingLogRepository): TrainingLogRepository
+
+    @Binds
+    fun trainingDayRepository(impl: DefaultTrainingDayRepository): TrainingDayRepository
 
     @Binds
     fun exerciseSetRepository(impl: DefaultExerciseSetRepository): ExerciseSetRepository
@@ -38,6 +49,9 @@ internal interface DataTrainingModule {
 
         @Provides
         fun logDao(database: TrainingDatabase) = database.logDao()
+
+        @Provides
+        fun trainingDayDao(database: TrainingDatabase) = database.trainingDayDao()
 
         @Provides
         fun exerciseSetDao(database: TrainingDatabase) = database.exerciseSetDao()

@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maruchin.core.model.ID
-import com.maruchin.data.training.LogRepository
-import com.maruchin.data.training.PlanRepository
+import com.maruchin.data.training.repository.TrainingLogRepository
+import com.maruchin.data.training.repository.TrainingPlanRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class AddNewLogViewModel @Inject constructor(
-    private val planRepository: PlanRepository,
-    private val logRepository: LogRepository,
+    private val trainingPlanRepository: TrainingPlanRepository,
+    private val trainingLogRepository: TrainingLogRepository,
 ) : ViewModel() {
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e("AddNewLogViewModel", "Error", throwable)
@@ -47,18 +47,18 @@ internal class AddNewLogViewModel @Inject constructor(
             check(logName.isNotBlank())
         }
         val selectedPlan = _uiState.value.selectedPlanId?.let { planId ->
-            planRepository.getById(planId).first()
+            trainingPlanRepository.getById(planId).first()
         }.let { plan ->
             checkNotNull(plan)
         }
-        logRepository.createNew(logName, selectedPlan)
+        trainingLogRepository.createNew(logName, selectedPlan)
         _uiState.update {
             it.copy(logCreated = true)
         }
     }
 
     private fun loadData() = viewModelScope.launch(exceptionHandler) {
-        val myPlans = planRepository.getAll().first()
+        val myPlans = trainingPlanRepository.getAll().first()
         _uiState.update {
             it.copy(myPlans = myPlans, selectedPlanId = myPlans.firstOrNull()?.id)
         }

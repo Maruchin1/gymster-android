@@ -1,5 +1,6 @@
 package com.maruchin.feature.traininglog.selectlog
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
@@ -26,51 +27,54 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.maruchin.core.ui.BackButton
-import com.maruchin.core.ui.ContentPlaceholder
-import com.maruchin.core.ui.GymsterTheme
-import com.maruchin.data.training.Log
-import com.maruchin.data.training.samplePlan
+import com.maruchin.core.ui.ContentPlaceholderView
+import com.maruchin.core.ui.LightAndDarkPreview
+import com.maruchin.core.ui.content.ContentLoadingView
+import com.maruchin.core.ui.theme.GymsterTheme
+import com.maruchin.data.training.model.TrainingLog
+import com.maruchin.data.training.model.samplePlan
 import com.maruchin.feature.activelog.R
 
 @Composable
 internal fun SelectLogScreen(
     state: SelectLogUiState,
     onBack: () -> Unit,
-    onSelectLog: (Log) -> Unit,
+    onSelectLog: (TrainingLog) -> Unit,
     onAddNewLog: () -> Unit,
-    onDeleteLog: (Log) -> Unit,
+    onDeleteLog: (TrainingLog) -> Unit,
 ) {
-    var logToDelete by remember { mutableStateOf<Log?>(null) }
+    var trainingLogToDelete by remember { mutableStateOf<TrainingLog?>(null) }
     Scaffold(
         topBar = {
             TopAppBar(onBack = onBack, onAddNewLog = onAddNewLog)
         }
     ) { padding ->
-        if (state.savedLogs.isEmpty()) {
-            ContentPlaceholder(
-                icon = Icons.Default.FitnessCenter,
-                text = stringResource(R.string.logs_placeholder),
-                modifier = Modifier.padding(padding)
-            )
-        } else {
-            LogListView(
-                logs = state.savedLogs,
-                onSelectLog = onSelectLog,
-                onDeleteLog = { logToDelete = it },
-                modifier = Modifier.padding(padding),
-            )
+        Crossfade(state.status, modifier = Modifier.padding(padding)) { status ->
+            when (status) {
+                SelectLogUiState.Status.LOADING -> ContentLoadingView()
+
+                SelectLogUiState.Status.NO_SAVED_LOGS -> ContentPlaceholderView(
+                    icon = Icons.Default.FitnessCenter,
+                    text = stringResource(R.string.active_log_placeholder),
+                )
+
+                SelectLogUiState.Status.LOADED -> LogListView(
+                    trainingLogs = state.savedTrainingLogs,
+                    onSelectLog = onSelectLog,
+                    onDeleteLog = { trainingLogToDelete = it },
+                )
+            }
         }
     }
-    logToDelete?.let { log ->
+    trainingLogToDelete?.let { log ->
         DeleteLogDialog(
             logName = log.name,
-            onDismiss = { logToDelete = null },
-            onConfirm = { onDeleteLog(log); logToDelete = null }
+            onDismiss = { trainingLogToDelete = null },
+            onConfirm = { onDeleteLog(log); trainingLogToDelete = null }
         )
     }
 }
@@ -99,13 +103,12 @@ private fun AddNewLogButton(onClick: () -> Unit) {
 
 @Composable
 private fun LogListView(
-    logs: List<Log>,
-    modifier: Modifier = Modifier,
-    onSelectLog: (Log) -> Unit,
-    onDeleteLog: (Log) -> Unit,
+    trainingLogs: List<TrainingLog>,
+    onSelectLog: (TrainingLog) -> Unit,
+    onDeleteLog: (TrainingLog) -> Unit,
 ) {
-    LazyColumn(modifier = modifier) {
-        items(logs) { log ->
+    LazyColumn {
+        items(trainingLogs) { log ->
             MyTrainingLogView(
                 name = log.name,
                 onClick = { onSelectLog(log) },
@@ -140,7 +143,7 @@ private fun MyTrainingLogView(name: String, onClick: () -> Unit, onLongClick: ()
     Divider(modifier = Modifier.padding(horizontal = 16.dp))
 }
 
-@Preview
+@LightAndDarkPreview
 @Composable
 private fun ChangeLogScreenPreview(
     @PreviewParameter(UiStateProvider::class) state: SelectLogUiState
@@ -159,17 +162,18 @@ private fun ChangeLogScreenPreview(
 private class UiStateProvider : PreviewParameterProvider<SelectLogUiState> {
     override val values = sequenceOf(
         SelectLogUiState(),
+        SelectLogUiState(status = SelectLogUiState.Status.NO_SAVED_LOGS),
         SelectLogUiState(
-            savedLogs = listOf(
-                Log(
+            listOf(
+                TrainingLog(
                     name = "Mój pierwszy plan",
                     plan = samplePlan,
                 ),
-                Log(
+                TrainingLog(
                     name = "Mój drugi plan",
                     plan = samplePlan,
                 ),
-                Log(
+                TrainingLog(
                     name = "Mój trzeci plan",
                     plan = samplePlan,
                 ),

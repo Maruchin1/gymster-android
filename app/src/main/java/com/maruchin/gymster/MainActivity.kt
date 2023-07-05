@@ -3,7 +3,7 @@ package com.maruchin.gymster
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.maruchin.core.ui.GymsterTheme
+import com.maruchin.core.ui.theme.GymsterTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

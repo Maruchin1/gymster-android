@@ -2,6 +2,14 @@ package com.maruchin.data.training.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.maruchin.data.training.database.dao.ExerciseSetDao
+import com.maruchin.data.training.database.dao.TrainingLogDao
+import com.maruchin.data.training.database.dao.TrainingDayDao
+import com.maruchin.data.training.database.model.DatabaseExercise
+import com.maruchin.data.training.database.model.DatabaseExerciseSet
+import com.maruchin.data.training.database.model.DatabaseLog
+import com.maruchin.data.training.database.model.DatabaseTrainingDay
+import com.maruchin.data.training.database.model.DatabaseTrainingWeek
 
 @Database(
     entities = [
@@ -14,6 +22,10 @@ import androidx.room.RoomDatabase
     version = 1,
 )
 internal abstract class TrainingDatabase : RoomDatabase() {
-    abstract fun logDao(): LogDao
+
+    abstract fun logDao(): TrainingLogDao
+
+    abstract fun trainingDayDao(): TrainingDayDao
+
     abstract fun exerciseSetDao(): ExerciseSetDao
 }

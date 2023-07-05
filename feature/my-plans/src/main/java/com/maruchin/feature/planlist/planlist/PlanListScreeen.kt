@@ -38,11 +38,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.maruchin.core.model.ID
-import com.maruchin.core.ui.GymsterTheme
-import com.maruchin.data.training.Exercise
-import com.maruchin.data.training.Plan
-import com.maruchin.data.training.TrainingDay
-import com.maruchin.data.training.samplePlan
+import com.maruchin.core.ui.theme.GymsterTheme
+import com.maruchin.data.training.model.Exercise
+import com.maruchin.data.training.model.Plan
+import com.maruchin.data.training.model.TrainingDay
+import com.maruchin.data.training.model.samplePlan
 import com.maruchin.feature.planlist.R
 import kotlinx.coroutines.launch
 
@@ -171,7 +171,7 @@ private fun ExerciseView(exercise: Exercise) {
             modifier = Modifier.weight(2f)
         )
         Text(
-            text = "${exercise.exerciseSets.size} x ${exercise.repsRange}",
+            text = "${exercise.sets.size} x ${exercise.repsRange}",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.End,
             fontWeight = FontWeight.SemiBold,

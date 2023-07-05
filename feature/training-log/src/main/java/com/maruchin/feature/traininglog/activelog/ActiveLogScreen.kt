@@ -1,11 +1,11 @@
 package com.maruchin.feature.traininglog.activelog
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -14,36 +14,40 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.maruchin.core.ui.GymsterTheme
-import com.maruchin.core.ui.VerticalDivider
+import com.maruchin.core.model.ID
+import com.maruchin.core.ui.ContentPlaceholderView
+import com.maruchin.core.ui.LightAndDarkPreview
 import com.maruchin.core.ui.content.ContentLoadingView
-import com.maruchin.data.training.Exercise
-import com.maruchin.data.training.Log
-import com.maruchin.data.training.ExerciseSet
-import com.maruchin.data.training.TrainingDay
-import com.maruchin.data.training.TrainingWeek
-import com.maruchin.data.training.sampleLog
-import com.maruchin.data.training.samplePlan
+import com.maruchin.core.ui.theme.GymsterTheme
+import com.maruchin.data.training.model.Exercise
+import com.maruchin.data.training.model.TrainingLog
+import com.maruchin.data.training.model.ExerciseSet
+import com.maruchin.data.training.model.TrainingDay
+import com.maruchin.data.training.model.TrainingWeek
+import com.maruchin.data.training.model.sampleTrainingLog
+import com.maruchin.data.training.model.samplePlan
 import com.maruchin.feature.activelog.R
 import kotlinx.coroutines.launch
 
@@ -51,22 +55,31 @@ import kotlinx.coroutines.launch
 internal fun ActiveLogScreen(
     state: ActiveLogUiState,
     onSelectLog: () -> Unit,
-    onEditExerciseSet: (ExerciseSet) -> Unit,
+    onChangeCurrentWeek: (TrainingWeek) -> Unit,
+    onEditExercise: (TrainingDay, Exercise) -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                logName = (state as? ActiveLogUiState.Success)?.log?.name,
+                logName = state.logName,
                 onSelectLog = onSelectLog
             )
         }
     ) { padding ->
-        Crossfade(state, modifier = Modifier.padding(padding)) {
-            when (it) {
-                ActiveLogUiState.Loading -> ContentLoadingView()
-                is ActiveLogUiState.Success -> WeeksView(
-                    weeks = it.log.weeks,
-                    onEditExerciseSet = onEditExerciseSet
+        Crossfade(state.status, modifier = Modifier.padding(padding)) { status ->
+            when (status) {
+                ActiveLogUiState.Status.LOADING -> ContentLoadingView()
+
+                ActiveLogUiState.Status.NO_ACTIVE_LOG -> ContentPlaceholderView(
+                    icon = Icons.Default.FitnessCenter,
+                    text = stringResource(R.string.active_log_placeholder)
+                )
+
+                ActiveLogUiState.Status.LOADED -> WeeksView(
+                    weeks = state.weeks,
+                    currentWeekId = state.currentWeekId,
+                    onChangeCurrentWeek = onChangeCurrentWeek,
+                    onEditExercise = onEditExercise,
                 )
             }
         }
@@ -98,12 +111,20 @@ private fun SelectLogButton(onClick: () -> Unit) {
 @Composable
 private fun WeeksView(
     weeks: List<TrainingWeek>,
-    onEditExerciseSet: (ExerciseSet) -> Unit,
-    modifier: Modifier = Modifier,
+    currentWeekId: ID,
+    onChangeCurrentWeek: (TrainingWeek) -> Unit,
+    onEditExercise: (TrainingDay, Exercise) -> Unit,
 ) {
-    val pagerState = rememberPagerState()
+    val currentPage = weeks.indexOfFirst { it.id == currentWeekId }
+    val pagerState = rememberPagerState(currentPage)
     val scope = rememberCoroutineScope()
-    Column(modifier = Modifier.then(modifier)) {
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            val week = weeks[page]
+            onChangeCurrentWeek(week)
+        }
+    }
+    Column {
         WeeksTabRow(
             weeks = weeks,
             currentPage = pagerState.currentPage,
@@ -114,7 +135,7 @@ private fun WeeksView(
         WeeksPager(
             weeks = weeks,
             pagerState = pagerState,
-            onEditExerciseSet = onEditExerciseSet,
+            onEditExercise = onEditExercise,
             modifier = Modifier.verticalScroll(rememberScrollState())
         )
     }
@@ -148,7 +169,7 @@ private fun WeekTab(weekNumber: Int, selected: Boolean, onClick: () -> Unit) {
 private fun WeeksPager(
     weeks: List<TrainingWeek>,
     pagerState: PagerState,
-    onEditExerciseSet: (ExerciseSet) -> Unit,
+    onEditExercise: (TrainingDay, Exercise) -> Unit,
     modifier: Modifier = Modifier
 ) {
     HorizontalPager(
@@ -157,18 +178,21 @@ private fun WeeksPager(
         modifier = modifier
     ) { page ->
         val week = weeks[page]
-        TrainingWeekView(days = week.days, onEditExerciseSet = onEditExerciseSet)
+        TrainingWeekView(days = week.days, onEditExercise = onEditExercise)
     }
 }
 
 @Composable
-private fun TrainingWeekView(days: List<TrainingDay>, onEditExerciseSet: (ExerciseSet) -> Unit) {
+private fun TrainingWeekView(
+    days: List<TrainingDay>,
+    onEditExercise: (TrainingDay, Exercise) -> Unit
+) {
     Column {
         days.forEach { day ->
             TrainingDayView(
                 name = day.name,
                 exercises = day.exercises,
-                onEditExerciseSet = onEditExerciseSet,
+                onEditExercise = { onEditExercise(day, it) },
             )
         }
         Spacer(modifier = Modifier.height(128.dp))
@@ -179,93 +203,111 @@ private fun TrainingWeekView(days: List<TrainingDay>, onEditExerciseSet: (Exerci
 private fun TrainingDayView(
     name: String,
     exercises: List<Exercise>,
-    onEditExerciseSet: (ExerciseSet) -> Unit,
+    onEditExercise: (Exercise) -> Unit,
 ) {
     Text(
         text = name,
-        style = MaterialTheme.typography.titleMedium,
+        style = MaterialTheme.typography.titleLarge,
         modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(top = 40.dp)
+            .padding(horizontal = 16.dp, vertical = 24.dp)
     )
     exercises.forEach { exercise ->
         ExerciseView(
-            number = exercise.number,
             name = exercise.name,
             repsRange = exercise.repsRange,
-        )
-        ExerciseSetsView(
-            exerciseSets = exercise.exerciseSets,
-            onEditExerciseSet = onEditExerciseSet
+            exerciseSets = exercise.sets,
+            onEdit = { onEditExercise(exercise) }
         )
     }
 }
 
 @Composable
 private fun ExerciseView(
-    number: String,
     name: String,
     repsRange: IntRange,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 8.dp, top = 24.dp)
-    ) {
-        Text(
-            text = "$number - $name",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = repsRange.toString(),
-            style = MaterialTheme.typography.labelLarge
-        )
-    }
-}
-
-@Composable
-private fun ExerciseSetsView(
     exerciseSets: List<ExerciseSet>,
-    onEditExerciseSet: (ExerciseSet) -> Unit
+    onEdit: () -> Unit
 ) {
-    Card(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Row(modifier = Modifier.height(IntrinsicSize.Min)) {
-            exerciseSets.forEachIndexed { index, set ->
+    Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+        OutlinedCard(
+            modifier = Modifier
+                .weight(3f)
+                .padding(8.dp)
+                .fillMaxHeight()
+        ) {
+            Text(
+                text = name,
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 2,
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .padding(top = 12.dp, bottom = 4.dp)
+            )
+            Text(
+                text = "${exerciseSets.size} serie",
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 1,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+            )
+            Text(
+                text = "$repsRange powtórzeń",
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .padding(top = 4.dp, bottom = 12.dp)
+            )
+        }
+        Card(
+            onClick = onEdit,
+            modifier = Modifier
+                .weight(2f)
+                .fillMaxHeight()
+                .padding(vertical = 8.dp)
+                .padding(end = 8.dp),
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+            (0..2).forEach { index ->
+                val set = exerciseSets.getOrNull(index)
                 ExerciseSetView(
-                    weight = set.weight,
-                    reps = set.reps,
-                    onEdit = { onEditExerciseSet(set) },
-                    modifier = Modifier.weight(1f)
+                    weight = set?.weight,
+                    reps = set?.reps,
+                    visible = set != null,
                 )
-                if (index != exerciseSets.lastIndex) {
-                    VerticalDivider()
-                }
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
 }
 
 @Composable
-private fun ExerciseSetView(
-    weight: Float?,
-    reps: Int?,
-    onEdit: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = if (weight != null && reps != null) "$weight x $reps" else "--",
-        style = MaterialTheme.typography.bodyMedium,
-        textAlign = TextAlign.Center,
-        modifier = Modifier
-            .clickable { onEdit() }
-            .padding(vertical = 16.dp)
-            .then(modifier)
-    )
+private fun ExerciseSetView(weight: Float?, reps: Int?, visible: Boolean) {
+    if (visible) {
+        Row {
+            Text(
+                text = weight?.toString() ?: "--",
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "X",
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                text = reps?.toString() ?: "--",
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    } else {
+        Text(text = "", style = MaterialTheme.typography.labelLarge)
+    }
 }
 
-@Preview
+@LightAndDarkPreview
 @Composable
 private fun ActiveLogScreenPreview(
     @PreviewParameter(UiStateProvider::class) state: ActiveLogUiState
@@ -274,15 +316,17 @@ private fun ActiveLogScreenPreview(
         ActiveLogScreen(
             state = state,
             onSelectLog = {},
-            onEditExerciseSet = {}
+            onChangeCurrentWeek = {},
+            onEditExercise = { _, _ -> },
         )
     }
 }
 
 private class UiStateProvider : PreviewParameterProvider<ActiveLogUiState> {
     override val values = sequenceOf(
-        ActiveLogUiState.Loading,
-        ActiveLogUiState.Success(log = Log(name = "Q1 2023", plan = samplePlan)),
-        ActiveLogUiState.Success(log = sampleLog)
+        ActiveLogUiState(),
+        ActiveLogUiState(null),
+        ActiveLogUiState(TrainingLog(name = "Q1 2023", plan = samplePlan)),
+        ActiveLogUiState(sampleTrainingLog)
     )
 }

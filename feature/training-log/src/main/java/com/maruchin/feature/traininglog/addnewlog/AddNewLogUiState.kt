@@ -1,7 +1,7 @@
 package com.maruchin.feature.traininglog.addnewlog
 
 import com.maruchin.core.model.ID
-import com.maruchin.data.training.Plan
+import com.maruchin.data.training.model.Plan
 
 internal data class AddNewLogUiState(
     val myPlans: List<Plan> = emptyList(),

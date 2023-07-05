@@ -7,8 +7,10 @@ value class ID(val value: String) {
 
     companion object {
 
-        fun random(): ID {
-            return ID(UUID.randomUUID().toString())
-        }
+        val random: ID
+            get() = ID(UUID.randomUUID().toString())
+
+        val empty: ID
+            get() = ID("")
     }
 }
