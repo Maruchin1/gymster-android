@@ -48,7 +48,7 @@ internal interface DataTrainingModule {
         }
 
         @Provides
-        fun logDao(database: TrainingDatabase) = database.logDao()
+        fun logDao(database: TrainingDatabase) = database.trainingLogDao()
 
         @Provides
         fun trainingDayDao(database: TrainingDatabase) = database.trainingDayDao()

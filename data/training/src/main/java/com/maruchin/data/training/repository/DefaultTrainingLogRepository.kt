@@ -5,7 +5,7 @@ import com.maruchin.data.training.database.dao.TrainingLogDao
 import com.maruchin.data.training.database.model.toDatabase
 import com.maruchin.data.training.database.model.toExternal
 import com.maruchin.data.training.model.TrainingLog
-import com.maruchin.data.training.model.Plan
+import com.maruchin.data.training.model.TrainingPlan
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -24,10 +24,10 @@ internal class DefaultTrainingLogRepository @Inject constructor(
         return trainingLogDao.getActive().map { it?.toExternal() }
     }
 
-    override suspend fun createNew(logName: String, plan: Plan) {
-        TrainingLog(logName, plan).toDatabase().let { newLog ->
-            trainingLogDao.insert(newLog)
-        }
+    override suspend fun createNew(logName: String, trainingPlan: TrainingPlan): TrainingLog {
+        val newTrainingLog = TrainingLog(logName, trainingPlan)
+        trainingLogDao.insert(newTrainingLog.toDatabase())
+        return newTrainingLog
     }
 
     override suspend fun activate(logId: ID) {

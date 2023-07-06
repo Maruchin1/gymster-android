@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.maruchin.data.training.database.model.DatabaseExercise
 import com.maruchin.data.training.database.model.DatabaseExerciseSet
-import com.maruchin.data.training.database.model.DatabaseLog
+import com.maruchin.data.training.database.model.DatabaseTrainingLog
 import com.maruchin.data.training.database.model.DatabaseLogWithWeeks
 import com.maruchin.data.training.database.model.DatabaseTrainingDay
 import com.maruchin.data.training.database.model.DatabaseTrainingWeek
@@ -37,7 +37,7 @@ internal abstract class TrainingLogDao {
             insertDays(daysWithExercises.map { it.day })
             daysWithExercises.flatMap { it.exercises }.let { exercisesWithSeries ->
                 insertExercises(exercisesWithSeries.map { it.exercise })
-                insertSeries(exercisesWithSeries.flatMap { it.series })
+                insertSeries(exercisesWithSeries.flatMap { it.sets })
             }
         }
     }
@@ -60,14 +60,14 @@ internal abstract class TrainingLogDao {
                 deleteDays(daysWithExercises.map { it.day })
                 daysWithExercises.flatMap { it.exercises }.let { exercisesWithSeries ->
                     deleteExercises(exercisesWithSeries.map { it.exercise })
-                    deleteSeries(exercisesWithSeries.flatMap { it.series })
+                    deleteSeries(exercisesWithSeries.flatMap { it.sets })
                 }
             }
         }
     }
 
     @Insert
-    protected abstract suspend fun insertLog(log: DatabaseLog)
+    protected abstract suspend fun insertLog(log: DatabaseTrainingLog)
 
     @Insert
     protected abstract suspend fun insertWeeks(weeks: List<DatabaseTrainingWeek>)
@@ -82,7 +82,7 @@ internal abstract class TrainingLogDao {
     protected abstract suspend fun insertSeries(series: List<DatabaseExerciseSet>)
 
     @Delete
-    protected abstract suspend fun deleteLog(log: DatabaseLog)
+    protected abstract suspend fun deleteLog(log: DatabaseTrainingLog)
 
     @Delete
     protected abstract suspend fun deleteWeeks(weeks: List<DatabaseTrainingWeek>)

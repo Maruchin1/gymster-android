@@ -2,14 +2,14 @@ package com.maruchin.data.training.model
 
 import com.maruchin.core.model.ID
 
-data class Plan(
+data class TrainingPlan(
     val id: ID = ID.random,
     val name: String,
     val numOfWeeks: Int,
     val days: List<TrainingDay>,
 )
 
-val samplePlan = Plan(
+val sampleTrainingPlan = TrainingPlan(
     name = "Poziom 3 Klatka Plecy",
     numOfWeeks = 12,
     days = listOf(

@@ -13,7 +13,8 @@ import javax.inject.Singleton
 internal class DefaultTrainingDayRepository @Inject constructor(
     private val trainingDayDao: TrainingDayDao,
 ) : TrainingDayRepository {
+
     override fun getById(trainingDayId: ID): Flow<TrainingDay?> {
-        return trainingDayDao.getById(trainingDayId.value).map { it.toExternal() }
+        return trainingDayDao.getById(trainingDayId.value).map { it?.toExternal() }
     }
 }

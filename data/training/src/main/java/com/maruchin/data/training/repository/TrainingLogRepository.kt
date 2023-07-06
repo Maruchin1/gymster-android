@@ -2,7 +2,7 @@ package com.maruchin.data.training.repository
 
 import com.maruchin.core.model.ID
 import com.maruchin.data.training.model.TrainingLog
-import com.maruchin.data.training.model.Plan
+import com.maruchin.data.training.model.TrainingPlan
 import kotlinx.coroutines.flow.Flow
 
 interface TrainingLogRepository {
@@ -11,7 +11,7 @@ interface TrainingLogRepository {
 
     fun getActive(): Flow<TrainingLog?>
 
-    suspend fun createNew(logName: String, plan: Plan)
+    suspend fun createNew(logName: String, trainingPlan: TrainingPlan): TrainingLog
 
     suspend fun activate(logId: ID)
 

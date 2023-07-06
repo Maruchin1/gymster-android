@@ -30,7 +30,7 @@ internal class PlanListViewModel @Inject constructor(
         allPlans,
         message,
     ) { allPlans, message ->
-        PlanListUiState(plans = allPlans, message = message)
+        PlanListUiState(trainingPlans = allPlans, message = message)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),

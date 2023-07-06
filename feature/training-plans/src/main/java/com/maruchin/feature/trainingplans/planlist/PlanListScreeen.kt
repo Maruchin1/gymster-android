@@ -40,9 +40,9 @@ import androidx.compose.ui.unit.dp
 import com.maruchin.core.model.ID
 import com.maruchin.core.ui.theme.GymsterTheme
 import com.maruchin.data.training.model.Exercise
-import com.maruchin.data.training.model.Plan
+import com.maruchin.data.training.model.TrainingPlan
 import com.maruchin.data.training.model.TrainingDay
-import com.maruchin.data.training.model.samplePlan
+import com.maruchin.data.training.model.sampleTrainingPlan
 import com.maruchin.feature.trainingplans.R
 import kotlinx.coroutines.launch
 
@@ -53,9 +53,9 @@ internal fun PlanListScreen(
     onCloseMessage: () -> Unit,
 ) {
     val plansPagerState = rememberPagerState()
-    val currentPlan by remember(state.plans) {
+    val currentPlan by remember(state.trainingPlans) {
         derivedStateOf {
-            state.plans[plansPagerState.currentPage]
+            state.trainingPlans[plansPagerState.currentPage]
         }
     }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -90,7 +90,7 @@ internal fun PlanListScreen(
     ) { padding ->
         PlansPagerView(
             state = plansPagerState,
-            plans = state.plans,
+            trainingPlans = state.trainingPlans,
             modifier = Modifier.padding(padding)
         )
     }
@@ -115,30 +115,30 @@ private fun TopAppBar() {
 }
 
 @Composable
-private fun PlansPagerView(state: PagerState, plans: List<Plan>, modifier: Modifier = Modifier) {
+private fun PlansPagerView(state: PagerState, trainingPlans: List<TrainingPlan>, modifier: Modifier = Modifier) {
     HorizontalPager(
-        pageCount = plans.size,
+        pageCount = trainingPlans.size,
         state = state,
         modifier = modifier.fillMaxSize()
     ) { page ->
-        PlanView(plan = plans[page])
+        PlanView(trainingPlan = trainingPlans[page])
     }
 }
 
 @Composable
-private fun PlanView(plan: Plan) {
+private fun PlanView(trainingPlan: TrainingPlan) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
         Text(
-            text = plan.name,
+            text = trainingPlan.name,
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(16.dp),
         )
         Divider(modifier = Modifier.padding(horizontal = 16.dp))
-        plan.days.forEach { day ->
+        trainingPlan.days.forEach { day ->
             DayView(day = day)
         }
         Spacer(modifier = Modifier.height(128.dp))
@@ -198,7 +198,7 @@ private fun CreateNewLogButton(onClick: () -> Unit) {
 private fun PlanListScreenPreview() {
     GymsterTheme {
         PlanListScreen(
-            state = PlanListUiState(plans = listOf(samplePlan)),
+            state = PlanListUiState(trainingPlans = listOf(sampleTrainingPlan)),
             onCreateNewLog = { _, _ -> },
             onCloseMessage = {},
         )

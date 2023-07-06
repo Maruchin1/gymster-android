@@ -47,7 +47,7 @@ import com.maruchin.data.training.model.ExerciseSet
 import com.maruchin.data.training.model.TrainingDay
 import com.maruchin.data.training.model.TrainingWeek
 import com.maruchin.data.training.model.sampleTrainingLog
-import com.maruchin.data.training.model.samplePlan
+import com.maruchin.data.training.model.sampleTrainingPlan
 import com.maruchin.feature.traininglogs.R
 import kotlinx.coroutines.launch
 
@@ -326,7 +326,7 @@ private class UiStateProvider : PreviewParameterProvider<ActiveLogUiState> {
     override val values = sequenceOf(
         ActiveLogUiState(),
         ActiveLogUiState(null),
-        ActiveLogUiState(TrainingLog(name = "Q1 2023", plan = samplePlan)),
+        ActiveLogUiState(TrainingLog(name = "Q1 2023", trainingPlan = sampleTrainingPlan)),
         ActiveLogUiState(sampleTrainingLog)
     )
 }

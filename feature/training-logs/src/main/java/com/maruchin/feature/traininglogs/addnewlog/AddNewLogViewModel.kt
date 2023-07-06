@@ -60,7 +60,7 @@ internal class AddNewLogViewModel @Inject constructor(
     private fun loadData() = viewModelScope.launch(exceptionHandler) {
         val myPlans = trainingPlanRepository.getAll().first()
         _uiState.update {
-            it.copy(myPlans = myPlans, selectedPlanId = myPlans.firstOrNull()?.id)
+            it.copy(myTrainingPlans = myPlans, selectedPlanId = myPlans.firstOrNull()?.id)
         }
     }
 }

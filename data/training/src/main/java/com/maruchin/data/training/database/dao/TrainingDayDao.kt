@@ -11,5 +11,5 @@ internal interface TrainingDayDao {
 
     @Transaction
     @Query("SELECT * FROM training_days WHERE id = :trainingDayId")
-    fun getById(trainingDayId: String): Flow<DatabaseTrainingDayWithExercises>
+    fun getById(trainingDayId: String): Flow<DatabaseTrainingDayWithExercises?>
 }

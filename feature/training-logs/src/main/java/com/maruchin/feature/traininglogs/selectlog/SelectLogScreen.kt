@@ -36,7 +36,7 @@ import com.maruchin.core.ui.LightAndDarkPreview
 import com.maruchin.core.ui.content.ContentLoadingView
 import com.maruchin.core.ui.theme.GymsterTheme
 import com.maruchin.data.training.model.TrainingLog
-import com.maruchin.data.training.model.samplePlan
+import com.maruchin.data.training.model.sampleTrainingPlan
 import com.maruchin.feature.traininglogs.R
 
 @Composable
@@ -167,15 +167,15 @@ private class UiStateProvider : PreviewParameterProvider<SelectLogUiState> {
             listOf(
                 TrainingLog(
                     name = "Mój pierwszy plan",
-                    plan = samplePlan,
+                    trainingPlan = sampleTrainingPlan,
                 ),
                 TrainingLog(
                     name = "Mój drugi plan",
-                    plan = samplePlan,
+                    trainingPlan = sampleTrainingPlan,
                 ),
                 TrainingLog(
                     name = "Mój trzeci plan",
-                    plan = samplePlan,
+                    trainingPlan = sampleTrainingPlan,
                 ),
             )
         )

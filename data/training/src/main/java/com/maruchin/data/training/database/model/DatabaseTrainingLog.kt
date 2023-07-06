@@ -8,7 +8,7 @@ import com.maruchin.core.model.ID
 import com.maruchin.data.training.model.TrainingLog
 
 @Entity(tableName = "logs")
-internal data class DatabaseLog(
+internal data class DatabaseTrainingLog(
     @PrimaryKey val id: String,
     val name: String,
     val planName: String,
@@ -18,7 +18,7 @@ internal data class DatabaseLog(
 
 internal data class DatabaseLogWithWeeks(
     @Embedded
-    val log: DatabaseLog,
+    val log: DatabaseTrainingLog,
     @Relation(entity = DatabaseTrainingWeek::class, parentColumn = "id", entityColumn = "logId")
     val weeks: List<DatabaseTrainingWeekWithDays>
 )
@@ -35,7 +35,7 @@ internal fun DatabaseLogWithWeeks.toExternal() = TrainingLog(
 internal fun List<DatabaseLogWithWeeks>.toExternal() = map { it.toExternal() }
 
 internal fun TrainingLog.toDatabase() = DatabaseLogWithWeeks(
-    log = DatabaseLog(
+    log = DatabaseTrainingLog(
         id = id.value,
         name = name,
         planName = planName,

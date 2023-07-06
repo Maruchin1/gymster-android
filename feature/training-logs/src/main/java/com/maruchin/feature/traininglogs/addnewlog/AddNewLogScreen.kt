@@ -28,8 +28,8 @@ import com.maruchin.core.model.ID
 import com.maruchin.core.ui.BackButton
 import com.maruchin.core.ui.LightAndDarkPreview
 import com.maruchin.core.ui.theme.GymsterTheme
-import com.maruchin.data.training.model.Plan
-import com.maruchin.data.training.model.samplePlan
+import com.maruchin.data.training.model.TrainingPlan
+import com.maruchin.data.training.model.sampleTrainingPlan
 import com.maruchin.feature.traininglogs.R
 
 @Composable
@@ -56,7 +56,7 @@ internal fun AddNewLogScreen(
             Spacer(modifier = Modifier.height(16.dp))
             SectionTitle(text = stringResource(R.string.select_training_plan))
             SelectPlanView(
-                plans = state.myPlans,
+                trainingPlans = state.myTrainingPlans,
                 selectedPlanId = state.selectedPlanId,
                 onSelectPlan = onSelectPlan,
             )
@@ -102,9 +102,9 @@ private fun SectionTitle(text: String) {
 }
 
 @Composable
-private fun SelectPlanView(plans: List<Plan>, selectedPlanId: ID?, onSelectPlan: (ID) -> Unit) {
+private fun SelectPlanView(trainingPlans: List<TrainingPlan>, selectedPlanId: ID?, onSelectPlan: (ID) -> Unit) {
     Column(modifier = Modifier.selectableGroup()) {
-        plans.forEach { plan ->
+        trainingPlans.forEach { plan ->
             PlanRadioButton(
                 name = plan.name,
                 selected = plan.id == selectedPlanId,
@@ -155,7 +155,7 @@ private fun AddNewLogScreenPreview() {
     GymsterTheme {
         AddNewLogScreen(
             state = AddNewLogUiState(
-                myPlans = listOf(samplePlan, samplePlan, samplePlan)
+                myTrainingPlans = listOf(sampleTrainingPlan, sampleTrainingPlan, sampleTrainingPlan)
             ),
             onBack = {},
             onChangeLogName = {},

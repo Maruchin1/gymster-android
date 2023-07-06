@@ -11,13 +11,13 @@ data class TrainingLog(
     val currentWeekId: ID = weeks.first().id,
 ) {
 
-    constructor(name: String, plan: Plan) : this(
+    constructor(name: String, trainingPlan: TrainingPlan) : this(
         name = name,
-        planName = plan.name,
-        weeks = (1..plan.numOfWeeks).map { weekNumber ->
+        planName = trainingPlan.name,
+        weeks = (1..trainingPlan.numOfWeeks).map { weekNumber ->
             TrainingWeek(
                 number = weekNumber,
-                days = plan.days.map { day ->
+                days = trainingPlan.days.map { day ->
                     day.copy(
                         id = ID.random,
                         exercises = day.exercises.map { exercise ->
@@ -36,7 +36,7 @@ data class TrainingLog(
     )
 }
 
-val sampleTrainingLog = TrainingLog(name = "Q1 2023", plan = samplePlan).let { log ->
+val sampleTrainingLog = TrainingLog(name = "Q1 2023", trainingPlan = sampleTrainingPlan).let { log ->
     log.copy(
         weeks = log.weeks.map { week ->
             week.copy(
@@ -59,4 +59,4 @@ val sampleTrainingLog = TrainingLog(name = "Q1 2023", plan = samplePlan).let { l
     )
 }
 
-val sampleEmptyTrainingLog = TrainingLog("Q2 2023", plan = samplePlan)
+val sampleEmptyTrainingLog = TrainingLog("Q2 2023", trainingPlan = sampleTrainingPlan)

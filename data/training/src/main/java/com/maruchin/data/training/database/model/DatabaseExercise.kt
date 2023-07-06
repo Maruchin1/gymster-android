@@ -21,7 +21,7 @@ internal data class DatabaseExerciseWithSeries(
     @Embedded
     val exercise: DatabaseExercise,
     @Relation(parentColumn = "id", entityColumn = "exerciseId")
-    val series: List<DatabaseExerciseSet>,
+    val sets: List<DatabaseExerciseSet>,
 )
 
 internal fun DatabaseExerciseWithSeries.toExternal() = Exercise(
@@ -29,7 +29,7 @@ internal fun DatabaseExerciseWithSeries.toExternal() = Exercise(
     number = exercise.number,
     name = exercise.name,
     repsRange = exercise.minReps..exercise.maxReps,
-    sets = series.toExternal(),
+    sets = sets.toExternal(),
 )
 
 internal fun List<DatabaseExerciseWithSeries>.toExternal() = map { it.toExternal() }
@@ -43,7 +43,7 @@ internal fun Exercise.toDatabase(trainingDayId: ID) = DatabaseExerciseWithSeries
         maxReps = repsRange.last,
         trainingDayId = trainingDayId.value,
     ),
-    series = sets.toDatabase(id),
+    sets = sets.toDatabase(id),
 )
 
 internal fun List<Exercise>.toDatabase(trainingDayId: ID) = map { it.toDatabase(trainingDayId) }
