@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maruchin.core.model.ID
-import com.maruchin.data.training.repository.ExerciseSetRepository
-import com.maruchin.data.training.repository.TrainingDayRepository
+import com.maruchin.data.training.repository.JournalSetRepository
+import com.maruchin.data.training.repository.JournalDayRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,10 +18,10 @@ import javax.inject.Inject
 @HiltViewModel
 internal class EditExerciseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    trainingDayRepository: TrainingDayRepository,
-    private val exerciseSetRepository: ExerciseSetRepository,
+    journalDayRepository: JournalDayRepository,
+    private val journalSetRepository: JournalSetRepository,
 ) : ViewModel() {
-    private val trainingDay = trainingDayRepository.getById(savedStateHandle.trainingDayId)
+    private val trainingDay = journalDayRepository.getById(savedStateHandle.trainingDayId)
     private val exerciseId = flowOf(savedStateHandle.exerciseId)
 
     val uiState: StateFlow<EditExerciseUiState> = combine(
@@ -31,10 +31,10 @@ internal class EditExerciseViewModel @Inject constructor(
     ).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), EditExerciseUiState())
 
     fun changeWeight(setId: ID, weight: Float?) = viewModelScope.launch {
-        exerciseSetRepository.updateWeight(setId, weight)
+        journalSetRepository.updateWeight(setId, weight)
     }
 
     fun changeReps(setId: ID, reps: Int?) = viewModelScope.launch {
-        exerciseSetRepository.updateReps(setId, reps)
+        journalSetRepository.updateReps(setId, reps)
     }
 }

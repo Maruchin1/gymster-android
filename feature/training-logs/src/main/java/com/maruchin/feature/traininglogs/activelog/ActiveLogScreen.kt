@@ -37,17 +37,16 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.maruchin.core.model.ID
-import com.maruchin.core.ui.ContentPlaceholderView
+import com.maruchin.core.ui.content.EmptyContentView
 import com.maruchin.core.ui.LightAndDarkPreview
-import com.maruchin.core.ui.content.ContentLoadingView
+import com.maruchin.core.ui.content.LoadingContentView
 import com.maruchin.core.ui.theme.GymsterTheme
-import com.maruchin.data.training.model.Exercise
-import com.maruchin.data.training.model.TrainingLog
-import com.maruchin.data.training.model.ExerciseSet
-import com.maruchin.data.training.model.TrainingDay
-import com.maruchin.data.training.model.TrainingWeek
-import com.maruchin.data.training.model.sampleTrainingLog
-import com.maruchin.data.training.model.sampleTrainingPlan
+import com.maruchin.data.training.model.JournalExercise
+import com.maruchin.data.training.model.JournalSet
+import com.maruchin.data.training.model.JournalDay
+import com.maruchin.data.training.model.JournalWeek
+import com.maruchin.data.training.model.sampleCompleteJournal
+import com.maruchin.data.training.model.sampleEmptyJournal
 import com.maruchin.feature.traininglogs.R
 import kotlinx.coroutines.launch
 
@@ -55,8 +54,8 @@ import kotlinx.coroutines.launch
 internal fun ActiveLogScreen(
     state: ActiveLogUiState,
     onSelectLog: () -> Unit,
-    onChangeCurrentWeek: (TrainingWeek) -> Unit,
-    onEditExercise: (TrainingDay, Exercise) -> Unit
+    onChangeCurrentWeek: (JournalWeek) -> Unit,
+    onEditExercise: (JournalDay, JournalExercise) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -68,9 +67,9 @@ internal fun ActiveLogScreen(
     ) { padding ->
         Crossfade(state.status, modifier = Modifier.padding(padding)) { status ->
             when (status) {
-                ActiveLogUiState.Status.LOADING -> ContentLoadingView()
+                ActiveLogUiState.Status.LOADING -> LoadingContentView()
 
-                ActiveLogUiState.Status.NO_ACTIVE_LOG -> ContentPlaceholderView(
+                ActiveLogUiState.Status.NO_ACTIVE_LOG -> EmptyContentView(
                     icon = Icons.Default.FitnessCenter,
                     text = stringResource(R.string.active_log_placeholder)
                 )
@@ -110,10 +109,10 @@ private fun SelectLogButton(onClick: () -> Unit) {
 
 @Composable
 private fun WeeksView(
-    weeks: List<TrainingWeek>,
+    weeks: List<JournalWeek>,
     currentWeekId: ID,
-    onChangeCurrentWeek: (TrainingWeek) -> Unit,
-    onEditExercise: (TrainingDay, Exercise) -> Unit,
+    onChangeCurrentWeek: (JournalWeek) -> Unit,
+    onEditExercise: (JournalDay, JournalExercise) -> Unit,
 ) {
     val currentPage = weeks.indexOfFirst { it.id == currentWeekId }
     val pagerState = rememberPagerState(currentPage)
@@ -142,7 +141,7 @@ private fun WeeksView(
 }
 
 @Composable
-private fun WeeksTabRow(weeks: List<TrainingWeek>, currentPage: Int, onChangePage: (Int) -> Unit) {
+private fun WeeksTabRow(weeks: List<JournalWeek>, currentPage: Int, onChangePage: (Int) -> Unit) {
     ScrollableTabRow(selectedTabIndex = currentPage) {
         weeks.forEachIndexed { index, week ->
             WeekTab(
@@ -167,9 +166,9 @@ private fun WeekTab(weekNumber: Int, selected: Boolean, onClick: () -> Unit) {
 
 @Composable
 private fun WeeksPager(
-    weeks: List<TrainingWeek>,
+    weeks: List<JournalWeek>,
     pagerState: PagerState,
-    onEditExercise: (TrainingDay, Exercise) -> Unit,
+    onEditExercise: (JournalDay, JournalExercise) -> Unit,
     modifier: Modifier = Modifier
 ) {
     HorizontalPager(
@@ -184,14 +183,14 @@ private fun WeeksPager(
 
 @Composable
 private fun TrainingWeekView(
-    days: List<TrainingDay>,
-    onEditExercise: (TrainingDay, Exercise) -> Unit
+    days: List<JournalDay>,
+    onEditExercise: (JournalDay, JournalExercise) -> Unit
 ) {
     Column {
         days.forEach { day ->
             TrainingDayView(
                 name = day.name,
-                exercises = day.exercises,
+                journalExercises = day.exercises,
                 onEditExercise = { onEditExercise(day, it) },
             )
         }
@@ -202,20 +201,19 @@ private fun TrainingWeekView(
 @Composable
 private fun TrainingDayView(
     name: String,
-    exercises: List<Exercise>,
-    onEditExercise: (Exercise) -> Unit,
+    journalExercises: List<JournalExercise>,
+    onEditExercise: (JournalExercise) -> Unit,
 ) {
     Text(
         text = name,
-        style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 24.dp)
+        style = MaterialTheme.typography.headlineMedium,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
     )
-    exercises.forEach { exercise ->
+    journalExercises.forEach { exercise ->
         ExerciseView(
             name = exercise.name,
             repsRange = exercise.repsRange,
-            exerciseSets = exercise.sets,
+            journalSets = exercise.sets,
             onEdit = { onEditExercise(exercise) }
         )
     }
@@ -225,7 +223,7 @@ private fun TrainingDayView(
 private fun ExerciseView(
     name: String,
     repsRange: IntRange,
-    exerciseSets: List<ExerciseSet>,
+    journalSets: List<JournalSet>,
     onEdit: () -> Unit
 ) {
     Row(modifier = Modifier.height(IntrinsicSize.Min)) {
@@ -244,7 +242,7 @@ private fun ExerciseView(
                     .padding(top = 12.dp, bottom = 4.dp)
             )
             Text(
-                text = "${exerciseSets.size} serie",
+                text = "${journalSets.size} serie",
                 style = MaterialTheme.typography.labelMedium,
                 maxLines = 1,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -268,7 +266,7 @@ private fun ExerciseView(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             (0..2).forEach { index ->
-                val set = exerciseSets.getOrNull(index)
+                val set = journalSets.getOrNull(index)
                 ExerciseSetView(
                     weight = set?.weight,
                     reps = set?.reps,
@@ -326,7 +324,7 @@ private class UiStateProvider : PreviewParameterProvider<ActiveLogUiState> {
     override val values = sequenceOf(
         ActiveLogUiState(),
         ActiveLogUiState(null),
-        ActiveLogUiState(TrainingLog(name = "Q1 2023", trainingPlan = sampleTrainingPlan)),
-        ActiveLogUiState(sampleTrainingLog)
+        ActiveLogUiState(sampleEmptyJournal),
+        ActiveLogUiState(sampleCompleteJournal)
     )
 }

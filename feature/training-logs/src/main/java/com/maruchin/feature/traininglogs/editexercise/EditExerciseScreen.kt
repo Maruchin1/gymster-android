@@ -46,12 +46,12 @@ import androidx.compose.ui.unit.dp
 import com.maruchin.core.model.ID
 import com.maruchin.core.ui.BackButton
 import com.maruchin.core.ui.LightAndDarkPreview
-import com.maruchin.core.ui.content.ContentLoadingView
+import com.maruchin.core.ui.content.LoadingContentView
 import com.maruchin.core.ui.theme.GymsterTheme
-import com.maruchin.data.training.model.Exercise
-import com.maruchin.data.training.model.ExerciseSet
-import com.maruchin.data.training.model.sampleEmptyTrainingLog
-import com.maruchin.data.training.model.sampleTrainingLog
+import com.maruchin.data.training.model.JournalExercise
+import com.maruchin.data.training.model.JournalSet
+import com.maruchin.data.training.model.sampleCompleteJournal
+import com.maruchin.data.training.model.sampleEmptyJournal
 import com.maruchin.feature.traininglogs.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -72,7 +72,7 @@ internal fun EditExerciseScreen(
     ) { padding ->
         Crossfade(state.loading, modifier = Modifier.padding(padding)) { loading ->
             if (loading) {
-                ContentLoadingView()
+                LoadingContentView()
             } else {
                 EditExerciseContent(
                     state = state,
@@ -106,7 +106,7 @@ private fun EditExerciseContent(
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier.fillMaxSize()) {
         ExercisesTabRow(
-            exercises = state.exercises,
+            journalExercises = state.journalExercises,
             currentPage = pagerState.currentPage,
             onSelectPage = { page ->
                 scope.launch {
@@ -115,7 +115,7 @@ private fun EditExerciseContent(
             }
         )
         ExercisesPager(
-            exercises = state.exercises,
+            journalExercises = state.journalExercises,
             pagerState = pagerState,
             onChangeWeight = onChangeWeight,
             onChangeReps = onChangeReps,
@@ -125,12 +125,12 @@ private fun EditExerciseContent(
 
 @Composable
 private fun ExercisesTabRow(
-    exercises: List<Exercise>,
+    journalExercises: List<JournalExercise>,
     currentPage: Int,
     onSelectPage: (Int) -> Unit,
 ) {
     TabRow(selectedTabIndex = currentPage) {
-        exercises.forEachIndexed { index, exercise ->
+        journalExercises.forEachIndexed { index, exercise ->
             Tab(
                 selected = index == currentPage,
                 text = {
@@ -146,13 +146,13 @@ private fun ExercisesTabRow(
 
 @Composable
 private fun ExercisesPager(
-    exercises: List<Exercise>,
+    journalExercises: List<JournalExercise>,
     pagerState: PagerState,
     onChangeWeight: (ID, Float?) -> Unit,
     onChangeReps: (ID, Int?) -> Unit,
 ) {
-    HorizontalPager(pageCount = exercises.size, state = pagerState) { page ->
-        val exercise = exercises[page]
+    HorizontalPager(pageCount = journalExercises.size, state = pagerState) { page ->
+        val exercise = journalExercises[page]
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -199,7 +199,7 @@ private fun ExerciseView(name: String, numOfSets: Int, repsRange: IntRange) {
 
 @Composable
 private fun ExerciseSetsView(
-    sets: List<ExerciseSet>,
+    sets: List<JournalSet>,
     onChangeWeight: (ID, Float?) -> Unit,
     onChangeReps: (ID, Int?) -> Unit
 ) {
@@ -314,12 +314,12 @@ private class UiStateProvider : PreviewParameterProvider<EditExerciseUiState> {
     override val values = sequenceOf(
         EditExerciseUiState(),
         EditExerciseUiState(
-            trainingDay = sampleTrainingLog.weeks.first().days.first(),
-            selectedExerciseId = sampleTrainingLog.weeks.first().days.first().exercises[2].id,
+            journalDay = sampleCompleteJournal.weeks.first().days.first(),
+            selectedExerciseId = sampleCompleteJournal.weeks.first().days.first().exercises[2].id,
         ),
         EditExerciseUiState(
-            trainingDay = sampleEmptyTrainingLog.weeks.first().days.first(),
-            selectedExerciseId = sampleEmptyTrainingLog.weeks.first().days.first().exercises[2].id,
+            journalDay = sampleEmptyJournal.weeks.first().days.first(),
+            selectedExerciseId = sampleEmptyJournal.weeks.first().days.first().exercises[2].id,
         ),
     )
 }

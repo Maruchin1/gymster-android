@@ -5,4 +5,8 @@
     <string name="log_name">Nazwa dziennika</string>
     <string name="confirm">Potwierdź</string>
     <string name="new_log_created">Utworzono nowy trening</string>
+    <string name="sets">serie</string>
+    <string name="reps">powtórzeń</string>
+    <string name="training_plans">Plany treningowe</string>
+    <string name="empty_plans">Nie masz jeszcze żadnych planów treningowych</string>
 </resources>

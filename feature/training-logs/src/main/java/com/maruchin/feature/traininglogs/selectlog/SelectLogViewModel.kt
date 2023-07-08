@@ -2,8 +2,8 @@ package com.maruchin.feature.traininglogs.selectlog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maruchin.data.training.model.TrainingLog
-import com.maruchin.data.training.repository.TrainingLogRepository
+import com.maruchin.data.training.model.Journal
+import com.maruchin.data.training.repository.JournalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,9 +15,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class SelectLogViewModel @Inject constructor(
-    private val trainingLogRepository: TrainingLogRepository,
+    private val journalRepository: JournalRepository,
 ) : ViewModel() {
-    private val allLogs = trainingLogRepository.getAll()
+    private val allLogs = journalRepository.getAll()
     private val logSelected = MutableStateFlow(false)
 
     val uiState: StateFlow<SelectLogUiState> = combine(
@@ -26,12 +26,12 @@ internal class SelectLogViewModel @Inject constructor(
         ::SelectLogUiState
     ).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SelectLogUiState())
 
-    fun selectLog(trainingLog: TrainingLog) = viewModelScope.launch {
-        trainingLogRepository.activate(trainingLog.id)
+    fun selectLog(journal: Journal) = viewModelScope.launch {
+        journalRepository.activate(journal.id)
         logSelected.value = true
     }
 
-    fun deleteLog(trainingLog: TrainingLog) = viewModelScope.launch {
-        trainingLogRepository.delete(trainingLog.id)
+    fun deleteLog(journal: Journal) = viewModelScope.launch {
+        journalRepository.delete(journal.id)
     }
 }

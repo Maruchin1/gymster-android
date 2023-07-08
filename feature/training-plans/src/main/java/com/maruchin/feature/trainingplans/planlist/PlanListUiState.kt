@@ -1,8 +1,12 @@
 package com.maruchin.feature.trainingplans.planlist
 
-import com.maruchin.data.training.model.TrainingPlan
+import com.maruchin.data.plan.model.Plan
 
-data class PlanListUiState(
-    val trainingPlans: List<TrainingPlan> = emptyList(),
-    val message: String = "",
-)
+internal sealed interface PlanListUiState {
+
+    object Loading : PlanListUiState
+
+    object NoPlans : PlanListUiState
+
+    data class Loaded(val plans: List<Plan>) : PlanListUiState
+}

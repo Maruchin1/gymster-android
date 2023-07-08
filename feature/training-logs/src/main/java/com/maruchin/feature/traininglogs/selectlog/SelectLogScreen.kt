@@ -31,23 +31,23 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.maruchin.core.ui.BackButton
-import com.maruchin.core.ui.ContentPlaceholderView
+import com.maruchin.core.ui.content.EmptyContentView
 import com.maruchin.core.ui.LightAndDarkPreview
-import com.maruchin.core.ui.content.ContentLoadingView
+import com.maruchin.core.ui.content.LoadingContentView
 import com.maruchin.core.ui.theme.GymsterTheme
-import com.maruchin.data.training.model.TrainingLog
-import com.maruchin.data.training.model.sampleTrainingPlan
+import com.maruchin.data.plan.model.samplePlan
+import com.maruchin.data.training.model.Journal
 import com.maruchin.feature.traininglogs.R
 
 @Composable
 internal fun SelectLogScreen(
     state: SelectLogUiState,
     onBack: () -> Unit,
-    onSelectLog: (TrainingLog) -> Unit,
+    onSelectLog: (Journal) -> Unit,
     onAddNewLog: () -> Unit,
-    onDeleteLog: (TrainingLog) -> Unit,
+    onDeleteLog: (Journal) -> Unit,
 ) {
-    var trainingLogToDelete by remember { mutableStateOf<TrainingLog?>(null) }
+    var journalToDelete by remember { mutableStateOf<Journal?>(null) }
     Scaffold(
         topBar = {
             TopAppBar(onBack = onBack, onAddNewLog = onAddNewLog)
@@ -55,26 +55,26 @@ internal fun SelectLogScreen(
     ) { padding ->
         Crossfade(state.status, modifier = Modifier.padding(padding)) { status ->
             when (status) {
-                SelectLogUiState.Status.LOADING -> ContentLoadingView()
+                SelectLogUiState.Status.LOADING -> LoadingContentView()
 
-                SelectLogUiState.Status.NO_SAVED_LOGS -> ContentPlaceholderView(
+                SelectLogUiState.Status.NO_SAVED_LOGS -> EmptyContentView(
                     icon = Icons.Default.FitnessCenter,
                     text = stringResource(R.string.active_log_placeholder),
                 )
 
                 SelectLogUiState.Status.LOADED -> LogListView(
-                    trainingLogs = state.savedTrainingLogs,
+                    journals = state.savedJournals,
                     onSelectLog = onSelectLog,
-                    onDeleteLog = { trainingLogToDelete = it },
+                    onDeleteLog = { journalToDelete = it },
                 )
             }
         }
     }
-    trainingLogToDelete?.let { log ->
+    journalToDelete?.let { log ->
         DeleteLogDialog(
             logName = log.name,
-            onDismiss = { trainingLogToDelete = null },
-            onConfirm = { onDeleteLog(log); trainingLogToDelete = null }
+            onDismiss = { journalToDelete = null },
+            onConfirm = { onDeleteLog(log); journalToDelete = null }
         )
     }
 }
@@ -103,12 +103,12 @@ private fun AddNewLogButton(onClick: () -> Unit) {
 
 @Composable
 private fun LogListView(
-    trainingLogs: List<TrainingLog>,
-    onSelectLog: (TrainingLog) -> Unit,
-    onDeleteLog: (TrainingLog) -> Unit,
+    journals: List<Journal>,
+    onSelectLog: (Journal) -> Unit,
+    onDeleteLog: (Journal) -> Unit,
 ) {
     LazyColumn {
-        items(trainingLogs) { log ->
+        items(journals) { log ->
             MyTrainingLogView(
                 name = log.name,
                 onClick = { onSelectLog(log) },
@@ -165,17 +165,17 @@ private class UiStateProvider : PreviewParameterProvider<SelectLogUiState> {
         SelectLogUiState(status = SelectLogUiState.Status.NO_SAVED_LOGS),
         SelectLogUiState(
             listOf(
-                TrainingLog(
+                Journal(
                     name = "Mój pierwszy plan",
-                    trainingPlan = sampleTrainingPlan,
+                    plan = samplePlan,
                 ),
-                TrainingLog(
+                Journal(
                     name = "Mój drugi plan",
-                    trainingPlan = sampleTrainingPlan,
+                    plan = samplePlan,
                 ),
-                TrainingLog(
+                Journal(
                     name = "Mój trzeci plan",
-                    trainingPlan = sampleTrainingPlan,
+                    plan = samplePlan,
                 ),
             )
         )

@@ -1,0 +1,14 @@
+plugins {
+    id 'com.android.library'
+    id 'gymster.android-conventions'
+    id 'gymster.room-conventions'
+}
+
+android {
+    namespace 'com.maruchin.data.training'
+}
+
+dependencies {
+    api project(':core:model')
+    api project(':data:plan')
+}

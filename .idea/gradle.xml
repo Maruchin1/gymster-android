@@ -16,7 +16,8 @@
             <option value="$PROJECT_DIR$/core/model" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/data" />
-            <option value="$PROJECT_DIR$/data/training" />
+            <option value="$PROJECT_DIR$/data/journal" />
+            <option value="$PROJECT_DIR$/data/plan" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/training-logs" />
             <option value="$PROJECT_DIR$/feature/training-plans" />

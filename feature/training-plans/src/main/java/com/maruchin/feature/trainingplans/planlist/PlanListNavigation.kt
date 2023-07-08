@@ -8,14 +8,13 @@ import androidx.navigation.compose.composable
 
 const val PLAN_LIST_ROUTE = "plan-list"
 
-fun NavGraphBuilder.planListScreen() {
+fun NavGraphBuilder.planListScreen(onCreatePlan: () -> Unit) {
     composable(PLAN_LIST_ROUTE) {
         val viewModel = hiltViewModel<PlanListViewModel>()
         val state by viewModel.uiState.collectAsStateWithLifecycle()
         PlanListScreen(
             state = state,
-            onCreateNewLog = viewModel::createNewLog,
-            onCloseMessage = viewModel::closeMessage,
+            onCreatePlan = onCreatePlan
         )
     }
 }

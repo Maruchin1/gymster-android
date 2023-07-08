@@ -1,11 +1,11 @@
 package com.maruchin.feature.traininglogs.selectlog
 
-import com.maruchin.data.training.model.TrainingLog
+import com.maruchin.data.training.model.Journal
 
 internal data class SelectLogUiState(
-    val savedTrainingLogs: List<TrainingLog> = emptyList(),
+    val savedJournals: List<Journal> = emptyList(),
     val logSelected: Boolean = false,
-    val status: Status = if (savedTrainingLogs.isEmpty()) Status.NO_SAVED_LOGS else Status.LOADED,
+    val status: Status = if (savedJournals.isEmpty()) Status.NO_SAVED_LOGS else Status.LOADED,
 ) {
 
     enum class Status {

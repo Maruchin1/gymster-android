@@ -27,6 +27,6 @@ android {
 dependencies {
     implementation project(':feature:training-logs')
     implementation project(':feature:training-plans')
-    implementation project(':data:training')
+    implementation project(':data:journal')
     implementation project(':core:ui')
 }

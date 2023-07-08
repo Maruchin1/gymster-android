@@ -9,6 +9,6 @@ android {
 }
 
 dependencies {
-    implementation project(':data:training')
+    implementation project(':data:journal')
     implementation project(':core:ui')
 }

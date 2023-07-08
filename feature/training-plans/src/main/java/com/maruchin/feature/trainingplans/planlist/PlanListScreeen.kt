@@ -1,206 +1,197 @@
 package com.maruchin.feature.trainingplans.planlist
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.maruchin.core.model.ID
+import com.maruchin.core.ui.LightAndDarkPreview
+import com.maruchin.core.ui.content.EmptyContentView
+import com.maruchin.core.ui.content.LoadingContentView
 import com.maruchin.core.ui.theme.GymsterTheme
-import com.maruchin.data.training.model.Exercise
-import com.maruchin.data.training.model.TrainingPlan
-import com.maruchin.data.training.model.TrainingDay
-import com.maruchin.data.training.model.sampleTrainingPlan
+import com.maruchin.data.plan.model.Plan
+import com.maruchin.data.plan.model.PlanDay
+import com.maruchin.data.plan.model.samplePlan
 import com.maruchin.feature.trainingplans.R
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun PlanListScreen(
-    state: PlanListUiState,
-    onCreateNewLog: (ID, String) -> Unit,
-    onCloseMessage: () -> Unit,
-) {
-    val plansPagerState = rememberPagerState()
-    val currentPlan by remember(state.trainingPlans) {
-        derivedStateOf {
-            state.trainingPlans[plansPagerState.currentPage]
-        }
-    }
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    var openCreateNewLogDialog by remember { mutableStateOf(false) }
-
-    fun showMessage(message: String) = scope.launch {
-        snackbarHostState.showSnackbar(message = message)
-        onCloseMessage()
-    }
-
-    LaunchedEffect(state.message) {
-        if (state.message.isNotEmpty()) {
-            showMessage(state.message)
-        }
-    }
-
+internal fun PlanListScreen(state: PlanListUiState, onCreatePlan: () -> Unit) {
     Scaffold(
         topBar = {
-            TopAppBar()
-        },
-        floatingActionButton = {
-            CreateNewLogButton(
-                onClick = {
-                    openCreateNewLogDialog = true
-                }
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            TopAppBar(onCreatePlan = onCreatePlan)
         }
     ) { padding ->
-        PlansPagerView(
-            state = plansPagerState,
-            trainingPlans = state.trainingPlans,
-            modifier = Modifier.padding(padding)
-        )
+        Box(modifier = Modifier.padding(padding)) {
+            when (state) {
+                PlanListUiState.Loading -> LoadingContentView()
+
+                PlanListUiState.NoPlans -> EmptyContentView(
+                    icon = Icons.Default.List,
+                    text = stringResource(R.string.empty_plans)
+                )
+
+                is PlanListUiState.Loaded -> PlanListContent(state.plans)
+            }
+        }
     }
-    if (openCreateNewLogDialog) {
-        CreateNewLogDialog(
-            onDismiss = {
-                openCreateNewLogDialog = false
-            },
-            onConfirm = { logName ->
-                onCreateNewLog(currentPlan.id, logName)
-                openCreateNewLogDialog = false
+}
+
+@Composable
+private fun TopAppBar(onCreatePlan: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(text = stringResource(R.string.training_plans))
+        },
+        actions = {
+            IconButton(onClick = onCreatePlan) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+            }
+        }
+    )
+}
+
+@Composable
+private fun PlanListContent(trainingPlans: List<Plan>) {
+    val pagerState = rememberPagerState()
+    val scope = rememberCoroutineScope()
+    Column(modifier = Modifier.fillMaxSize()) {
+        TrainingPlanTabRow(
+            trainingPlans = trainingPlans,
+            currentPage = pagerState.currentPage,
+            onChangePage = { page ->
+                scope.launch {
+                    pagerState.animateScrollToPage(page)
+                }
             }
         )
+        TrainingPlanPager(trainingPlans = trainingPlans, pagerState = pagerState)
     }
 }
 
 @Composable
-private fun TopAppBar() {
-    TopAppBar(
-        title = { Text(text = stringResource(R.string.my_plans)) },
-    )
-}
-
-@Composable
-private fun PlansPagerView(state: PagerState, trainingPlans: List<TrainingPlan>, modifier: Modifier = Modifier) {
-    HorizontalPager(
-        pageCount = trainingPlans.size,
-        state = state,
-        modifier = modifier.fillMaxSize()
-    ) { page ->
-        PlanView(trainingPlan = trainingPlans[page])
-    }
-}
-
-@Composable
-private fun PlanView(trainingPlan: TrainingPlan) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+private fun TrainingPlanTabRow(
+    trainingPlans: List<Plan>,
+    currentPage: Int,
+    onChangePage: (Int) -> Unit
+) {
+    ScrollableTabRow(
+        selectedTabIndex = currentPage,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = trainingPlan.name,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(16.dp),
-        )
-        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-        trainingPlan.days.forEach { day ->
-            DayView(day = day)
+        trainingPlans.forEachIndexed { index, trainingPlan ->
+            Tab(
+                selected = index == currentPage,
+                text = {
+                    Text(text = trainingPlan.name)
+                },
+                onClick = {
+                    onChangePage(index)
+                }
+            )
         }
-        Spacer(modifier = Modifier.height(128.dp))
     }
 }
 
 @Composable
-private fun DayView(day: TrainingDay) {
-    Text(
-        text = day.name,
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(16.dp)
-    )
-    day.exercises.forEach { exercise ->
-        ExerciseView(exercise = exercise)
+private fun TrainingPlanPager(trainingPlans: List<Plan>, pagerState: PagerState) {
+    HorizontalPager(pageCount = trainingPlans.size, state = pagerState) { page ->
+        val trainingPlan = trainingPlans[page]
+        TrainingPlanView(days = trainingPlan.days)
     }
 }
 
 @Composable
-private fun ExerciseView(exercise: Exercise) {
-    Row(
+private fun TrainingPlanView(days: List<PlanDay>) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        days.forEach { trainingDay ->
+            item {
+                Text(
+                    text = trainingDay.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 24.dp
+                    )
+                )
+            }
+            items(trainingDay.exercises) { exercise ->
+                ExerciseView(
+                    name = exercise.name,
+                    numOfSets = exercise.sets,
+                    repsRange = exercise.repsRange,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseView(name: String, numOfSets: Int, repsRange: IntRange) {
+    OutlinedCard(
         modifier = Modifier
+            .padding(8.dp)
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp),
     ) {
         Text(
-            text = exercise.name,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(2f)
+            text = name,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(12.dp)
         )
         Text(
-            text = "${exercise.sets.size} x ${exercise.repsRange}",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.End,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.weight(1f),
+            text = "$numOfSets ${stringResource(R.string.sets)}",
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(horizontal = 12.dp)
+        )
+        Text(
+            text = "$repsRange ${stringResource(R.string.reps)}",
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(12.dp)
         )
     }
 }
 
+@LightAndDarkPreview
 @Composable
-private fun CreateNewLogButton(onClick: () -> Unit) {
-    ExtendedFloatingActionButton(
-        text = {
-            Text(text = stringResource(R.string.create_new_log))
-        },
-        icon = {
-            Icon(imageVector = Icons.Default.Create, contentDescription = null)
-        },
-        onClick = onClick,
-    )
-}
-
-@Preview
-@Composable
-private fun PlanListScreenPreview() {
+private fun PlanListScreenPreview(
+    @PreviewParameter(UiStateProvider::class) state: PlanListUiState
+) {
     GymsterTheme {
         PlanListScreen(
-            state = PlanListUiState(trainingPlans = listOf(sampleTrainingPlan)),
-            onCreateNewLog = { _, _ -> },
-            onCloseMessage = {},
+            state = state,
+            onCreatePlan = {}
         )
     }
+}
+
+private class UiStateProvider : PreviewParameterProvider<PlanListUiState> {
+    override val values = sequenceOf(
+        PlanListUiState.Loading,
+        PlanListUiState.NoPlans,
+        PlanListUiState.Loaded(plans = listOf(samplePlan, samplePlan, samplePlan))
+    )
 }
