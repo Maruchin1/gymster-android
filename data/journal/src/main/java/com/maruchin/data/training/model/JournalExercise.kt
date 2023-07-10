@@ -1,7 +1,7 @@
 package com.maruchin.data.training.model
 
 import com.maruchin.core.model.ID
-import com.maruchin.data.plan.model.PlanExercise
+import com.maruchin.data.plan.model.Exercise
 
 data class JournalExercise(
     val id: ID = ID.random,
@@ -11,10 +11,10 @@ data class JournalExercise(
     val sets: List<JournalSet>,
 ) {
 
-    constructor(planExercise: PlanExercise) : this(
-        number = planExercise.number,
-        name = planExercise.name,
-        repsRange = planExercise.repsRange,
-        sets = (1..planExercise.sets).map { JournalSet() }
+    constructor(exercise: Exercise) : this(
+        number = "",
+        name = exercise.name,
+        repsRange = exercise.repsRange,
+        sets = emptyList()
     )
 }

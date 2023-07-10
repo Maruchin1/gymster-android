@@ -44,7 +44,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.maruchin.core.model.ID
-import com.maruchin.core.ui.BackButton
+import com.maruchin.core.ui.button.BackButton
 import com.maruchin.core.ui.LightAndDarkPreview
 import com.maruchin.core.ui.content.LoadingContentView
 import com.maruchin.core.ui.theme.GymsterTheme

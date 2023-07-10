@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'gymster.android-conventions'
     id 'gymster.room-conventions'
+    id 'gymster.datastore-conventions'
 }
 
 android {

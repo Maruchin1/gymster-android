@@ -16,7 +16,7 @@ data class Journal(
     constructor(name: String, plan: Plan) : this(
         name = name,
         planName = plan.name,
-        weeks = (1..plan.weeks).map { JournalWeek(it, plan.days) }
+        weeks = plan.weeks.mapIndexed { index, week -> JournalWeek(index + 1, week.trainings) }
     )
 }
 

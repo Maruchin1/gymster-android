@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.maruchin.core.ui.BackButton
+import com.maruchin.core.ui.button.BackButton
 import com.maruchin.core.ui.content.EmptyContentView
 import com.maruchin.core.ui.LightAndDarkPreview
 import com.maruchin.core.ui.content.LoadingContentView

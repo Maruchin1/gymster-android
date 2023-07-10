@@ -1,7 +1,7 @@
 package com.maruchin.data.training.model
 
 import com.maruchin.core.model.ID
-import com.maruchin.data.plan.model.PlanDay
+import com.maruchin.data.plan.model.Training
 
 data class JournalDay(
     val id: ID = ID.random,
@@ -9,8 +9,8 @@ data class JournalDay(
     val exercises: List<JournalExercise> = emptyList(),
 ) {
 
-    constructor(planDay: PlanDay) : this(
-        name = planDay.name,
-        exercises = planDay.exercises.map { JournalExercise(it) }
+    constructor(training: Training) : this(
+        name = training.name,
+        exercises = training.exercises.map { JournalExercise(it) }
     )
 }

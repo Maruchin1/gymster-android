@@ -20,9 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.maruchin.feature.trainingplans.MY_PLANS_ROUTE
-import com.maruchin.feature.trainingplans.myPlansGraph
-import com.maruchin.feature.trainingplans.navigateToMyPlans
+import com.maruchin.feature.plans.myPlansGraph
+import com.maruchin.feature.plans.navigateToMyPlans
 import com.maruchin.feature.traininglogs.TRAINING_LOG_ROUTE
 import com.maruchin.feature.traininglogs.navigateToTrainingLog
 import com.maruchin.feature.traininglogs.trainingLogGraph
@@ -67,7 +66,7 @@ internal fun App() {
                     label = {
                         Text(text = "Plany")
                     },
-                    selected = isRouteSelected(MY_PLANS_ROUTE),
+                    selected = isRouteSelected("plans"),
                     onClick = {
                         navController.navigateToMyPlans(createNavOptions())
                     }

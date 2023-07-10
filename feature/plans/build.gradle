@@ -5,9 +5,10 @@ plugins {
 }
 
 android {
-    namespace 'com.maruchin.core.ui'
+    namespace 'com.maruchin.feature.plans'
 }
 
 dependencies {
-    api project(':core:model')
+    implementation project(':data:journal')
+    implementation project(':core:ui')
 }

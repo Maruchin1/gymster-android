@@ -5,177 +5,97 @@ import com.maruchin.core.model.ID
 data class Plan(
     val id: ID = ID.random,
     val name: String,
-    val weeks: Int,
-    val days: List<PlanDay>
+    val weeks: List<Week>,
 )
 
 val samplePlan = Plan(
-    name = "Poziom 3 Klatka Plecy",
-    weeks = 12,
-    days = listOf(
-        PlanDay(
-            name = "PUSH SIŁA",
-            exercises = listOf(
-                PlanExercise(
-                    number = "1",
-                    name = "Wyciskanie sztangi na ławce poziomej",
-                    repsRange = 4..6,
-                    sets = 3
+    name = "Poziom 3 Ogólny",
+    weeks = (1..6).map {
+        Week(
+            trainings = listOf(
+                Training(
+                    name = "TRENING 1 - PUSH 1",
+                    exercises = listOf(
+                        Exercise(
+                            name = "Wyciskanie sztangi na ławce poziomej",
+                            sets = Sets(standard = 3, drop = 0),
+                            repsRange = 4..6,
+                            rest = "2-3min",
+                        ),
+                        Exercise(
+                            name = "Rozpiętki hantlami na ławce skos dodatni",
+                            sets = Sets(standard = 2, drop = 1),
+                            repsRange = 10..12,
+                            rest = "2-3min +30sek",
+                        ),
+                        Exercise(
+                            name = "Wyciskanie hantli nad głowę siedzac",
+                            sets = Sets(standard = 2, drop = 1),
+                            repsRange = 8..10,
+                            rest = "2-3min +30sek",
+                        ),
+                        Exercise(
+                            name = "Wznosy hantli bokiem stojąc",
+                            sets = Sets(standard = 1, drop = 3),
+                            repsRange = 10..20,
+                            rest = "30sek",
+                        ),
+                        Exercise(
+                            name = "Prostowanie ramion na wyciągu",
+                            sets = Sets(standard = 2, drop = 1),
+                            repsRange = 10..12,
+                            rest = "2-3min +30sek",
+                        ),
+                        Exercise(
+                            name = "Wybierz dowolne ćwiczenie z playlisty z filmu",
+                            sets = Sets(standard = 1, drop = 2),
+                            repsRange = 10..20,
+                            rest = "30sek",
+                        )
+                    )
                 ),
-                PlanExercise(
-                    number = "2",
-                    name = "Wyciskanie hantli na ławce skośnej",
-                    repsRange = 6..8,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "3",
-                    name = "Rozpiętki hantlami",
-                    repsRange = 12..15,
-                    sets = 2
-                ),
-                PlanExercise(
-                    number = "4A",
-                    name = "Prostowanie na wyciągu jednorącz",
-                    repsRange = 12..15,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "4B",
-                    name = "Wznosy bokiem na wyciągu jednorącz",
-                    repsRange = 12..15,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "5",
-                    name = "Przysiad z hantlem",
-                    repsRange = 10..12,
-                    sets = 2
+                Training(
+                    name = "TRENING 2 - PULL 1",
+                    exercises = listOf(
+                        Exercise(
+                            name = "Wiosłowanie sztangą",
+                            sets = Sets(standard = 3, drop = 0),
+                            repsRange = 6..8,
+                            rest = "2-3min",
+                        ),
+                        Exercise(
+                            name = "Sciąganie drążka wyciągu górnego chwytem V",
+                            sets = Sets(standard = 3, drop = 0),
+                            repsRange = 8..10,
+                            rest = "2-3min"
+                        ),
+                        Exercise(
+                            name = "Wiosłowanie hantlami w oparciu o ławkę",
+                            sets = Sets(standard = 2, drop = 0),
+                            repsRange = 10..12,
+                            rest = "2-3min"
+                        ),
+                        Exercise(
+                            name = "Odwrotne rozpiętki hantlami w oparciu o ławkę",
+                            sets = Sets(standard = 1, drop = 2),
+                            repsRange = 10..20,
+                            rest = "30sek"
+                        ),
+                        Exercise(
+                            name = "Uginanie hantli nad modlitewniku",
+                            sets = Sets(standard = 2, drop = 1),
+                            repsRange = 10..12,
+                            rest = "2-3min +30sek"
+                        ),
+                        Exercise(
+                            name = "Wybierz dowolne ćwiczenie z playlisty z filmu",
+                            sets = Sets(standard = 1, drop = 2),
+                            repsRange = 10..20,
+                            rest = "30sek"
+                        )
+                    )
                 )
             )
-        ),
-        PlanDay(
-            name = "PULL SIŁA",
-            exercises = listOf(
-                PlanExercise(
-                    number = "1",
-                    name = "Wiosłowanie sztangi nachwytem",
-                    repsRange = 4..6,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "2",
-                    name = "Sciąganie drążka na wyciągu",
-                    repsRange = 6..8,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "3",
-                    name = "Wiosłowanie na wyciągu jednorącz",
-                    repsRange = 12..15,
-                    sets = 2
-                ),
-                PlanExercise(
-                    number = "4",
-                    name = "Rumuński martwy ciąg hantlami",
-                    repsRange = 10..12,
-                    sets = 2
-                ),
-                PlanExercise(
-                    number = "5A",
-                    name = "Uginanie hantli stojąc",
-                    repsRange = 12..15,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "5B",
-                    name = "Odwrotne rozpiętki na bramie",
-                    repsRange = 12..15,
-                    sets = 3
-                )
-            )
-        ),
-        PlanDay(
-            name = "PUSH HYPER",
-            exercises = listOf(
-                PlanExercise(
-                    number = "1",
-                    name = "Wyciskanie sztangi na ławce poziomej",
-                    repsRange = 8..10,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "2",
-                    name = "Wyciskanie hantli na ławce skośnej",
-                    repsRange = 10..12,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "3",
-                    name = "Rozpiętki hantlami",
-                    repsRange = 12..15,
-                    sets = 2
-                ),
-                PlanExercise(
-                    number = "4A",
-                    name = "Prostowanie na wyciągu jednorącz",
-                    repsRange = 12..15,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "4B",
-                    name = "Wznosy bokiem na wyciągu jednorącz",
-                    repsRange = 12..15,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "5",
-                    name = "Przysiad z hantlem",
-                    repsRange = 10..12,
-                    sets = 2
-                )
-            )
-        ),
-        PlanDay(
-            name = "PULL HYPER",
-            exercises = listOf(
-                PlanExercise(
-                    number = "1",
-                    name = "Wiosłowanie sztangi nachwytem",
-                    repsRange = 8..10,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "2",
-                    name = "Sciąganie drążka na wyciągu",
-                    repsRange = 10..12,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "3",
-                    name = "Wiosłowanie na wyciągu jednorącz",
-                    repsRange = 12..15,
-                    sets = 2
-                ),
-                PlanExercise(
-                    number = "4",
-                    name = "Rumuński martwy ciąg hantlami",
-                    repsRange = 10..12,
-                    sets = 2
-                ),
-                PlanExercise(
-                    number = "5A",
-                    name = "Uginanie hantli stojąc",
-                    repsRange = 12..15,
-                    sets = 3
-                ),
-                PlanExercise(
-                    number = "5B",
-                    name = "Odwrotne rozpiętki na bramie",
-                    repsRange = 12..15,
-                    sets = 3
-                )
-            )
-        ),
-    )
+        )
+    }
 )
