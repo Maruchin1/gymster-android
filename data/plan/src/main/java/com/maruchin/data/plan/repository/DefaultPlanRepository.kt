@@ -1,6 +1,5 @@
 package com.maruchin.data.plan.repository
 
-import com.maruchin.core.model.ID
 import com.maruchin.data.plan.model.Plan
 import com.maruchin.data.plan.model.samplePlan
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +16,7 @@ internal class DefaultPlanRepository @Inject constructor() : PlanRepository {
         return plans
     }
 
-    override fun getById(planId: ID): Flow<Plan?> {
+    override fun getById(planId: String): Flow<Plan?> {
         return plans.map { plans ->
             plans.find { it.id == planId }
         }

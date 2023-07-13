@@ -6,10 +6,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.maruchin.core.model.ID
+import com.maruchin.feature.plans.ARG_PLAN_ID
+import com.maruchin.feature.plans.ROUTE_PLAN_DETAILS
 
 internal fun NavGraphBuilder.planDetailsScreen(onBack: () -> Unit) {
-    composable(route = "plan-details/{planId}") {
+    composable("$ROUTE_PLAN_DETAILS/{$ARG_PLAN_ID}") {
         val viewModel: PlanDetailsViewModel = hiltViewModel()
         val state by viewModel.uiState.collectAsStateWithLifecycle()
         PlanDetailsScreen(
@@ -19,6 +20,6 @@ internal fun NavGraphBuilder.planDetailsScreen(onBack: () -> Unit) {
     }
 }
 
-internal fun NavController.navigateToPlanDetails(planId: ID) {
-    navigate("plan-details/${planId.value}")
+internal fun NavController.navigateToPlanDetails(planId: String) {
+    navigate("$ROUTE_PLAN_DETAILS/$planId")
 }

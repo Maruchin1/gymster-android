@@ -1,9 +1,9 @@
 package com.maruchin.data.plan.model
 
-import com.maruchin.core.model.ID
+import java.util.UUID
 
 data class Exercise(
-    val id: ID = ID.random,
+    val id: String = UUID.randomUUID().toString(),
     val name: String,
     val sets: Sets,
     val repsRange: IntRange,

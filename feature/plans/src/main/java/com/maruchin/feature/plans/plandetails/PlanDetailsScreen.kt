@@ -2,18 +2,13 @@ package com.maruchin.feature.plans.plandetails
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
@@ -22,15 +17,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import androidx.compose.ui.unit.dp
+import com.maruchin.core.ui.ExerciseItem
 import com.maruchin.core.ui.LightAndDarkPreview
+import com.maruchin.core.ui.TrainingItem
 import com.maruchin.core.ui.button.BackButton
-import com.maruchin.core.ui.content.LoadingContentView
+import com.maruchin.core.ui.content.LoadingContent
 import com.maruchin.core.ui.theme.GymsterTheme
-import com.maruchin.data.plan.model.Sets
 import com.maruchin.data.plan.model.Training
 import com.maruchin.data.plan.model.Week
 import com.maruchin.data.plan.model.samplePlan
@@ -51,7 +45,7 @@ internal fun PlanDetailsScreen(state: PlanDetailsUiState, onBack: () -> Unit) {
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
             when (state) {
-                PlanDetailsUiState.Loading -> LoadingContentView()
+                PlanDetailsUiState.Loading -> LoadingContent()
                 is PlanDetailsUiState.Success -> PlanDetailsContent(weeks = state.plan.weeks)
             }
         }
@@ -127,90 +121,11 @@ private fun WeekPage(trainings: List<Training>) {
         trainings.forEach { training ->
             TrainingItem(name = training.name)
             training.exercises.forEach { exercise ->
-                PlanItem(
+                ExerciseItem(
                     name = exercise.name,
-                    sets = exercise.sets,
-                    repsRange = exercise.repsRange,
+                    sets = exercise.sets.toString(),
+                    repsRange = exercise.repsRange.toString(),
                     rest = exercise.rest
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun TrainingItem(name: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(12.dp),
-        )
-    }
-}
-
-@Composable
-private fun PlanItem(name: String, sets: Sets, repsRange: IntRange, rest: String) {
-    OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(12.dp)
-        )
-        Row {
-            Column {
-                Text(
-                    text = "Serie",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp)
-                )
-                Text(
-                    text = "Powtórzenia",
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp)
-                )
-                Text(
-                    text = "Przerwa",
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp)
-                )
-            }
-            Column {
-                Text(
-                    text = sets.toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp)
-                )
-                Text(
-                    text = repsRange.toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp)
-                )
-                Text(
-                    text = rest,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp)
                 )
             }
         }

@@ -1,8 +1,8 @@
 package com.maruchin.data.plan.model
 
-import com.maruchin.core.model.ID
+import java.util.UUID
 
 data class Week(
-    val id: ID = ID.random,
+    val id: String = UUID.randomUUID().toString(),
     val trainings: List<Training>,
 )

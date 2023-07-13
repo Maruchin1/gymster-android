@@ -20,11 +20,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.maruchin.feature.plans.myPlansGraph
-import com.maruchin.feature.plans.navigateToMyPlans
-import com.maruchin.feature.traininglogs.TRAINING_LOG_ROUTE
-import com.maruchin.feature.traininglogs.navigateToTrainingLog
-import com.maruchin.feature.traininglogs.trainingLogGraph
+import com.maruchin.feature.journals.ROUTE_JOURNALS
+import com.maruchin.feature.plans.plansGraph
+import com.maruchin.feature.plans.navigateToPlans
+import com.maruchin.feature.journals.navigateToTrainingLog
+import com.maruchin.feature.journals.trainingLogGraph
+import com.maruchin.feature.plans.ROUTE_PLANS
 
 @Composable
 internal fun App() {
@@ -54,7 +55,7 @@ internal fun App() {
                     label = {
                         Text(text = "Treningi")
                     },
-                    selected = isRouteSelected(TRAINING_LOG_ROUTE),
+                    selected = isRouteSelected(ROUTE_JOURNALS),
                     onClick = {
                         navController.navigateToTrainingLog(createNavOptions())
                     },
@@ -66,9 +67,9 @@ internal fun App() {
                     label = {
                         Text(text = "Plany")
                     },
-                    selected = isRouteSelected("plans"),
+                    selected = isRouteSelected(ROUTE_PLANS),
                     onClick = {
-                        navController.navigateToMyPlans(createNavOptions())
+                        navController.navigateToPlans(createNavOptions())
                     }
                 )
                 NavigationBarItem(
@@ -96,11 +97,11 @@ internal fun App() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = TRAINING_LOG_ROUTE,
+            startDestination = ROUTE_JOURNALS,
             modifier = Modifier.padding(padding)
         ) {
             trainingLogGraph(navController)
-            myPlansGraph(navController)
+            plansGraph(navController)
         }
     }
 }

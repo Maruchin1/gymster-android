@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.maruchin.core.ui.LightAndDarkPreview
-import com.maruchin.core.ui.content.LoadingContentView
+import com.maruchin.core.ui.content.LoadingContent
 import com.maruchin.core.ui.theme.GymsterTheme
 import com.maruchin.data.plan.model.Plan
 import com.maruchin.data.plan.model.samplePlan
@@ -38,7 +38,7 @@ internal fun PlanListScreen(
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
             when (state) {
-                PlanListUiState.Loading -> LoadingContentView()
+                PlanListUiState.Loading -> LoadingContent()
 
                 is PlanListUiState.Success -> PlansGrid(
                     plans = state.plans,

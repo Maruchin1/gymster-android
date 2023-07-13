@@ -13,14 +13,13 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/core/model" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data/journal" />
             <option value="$PROJECT_DIR$/data/plan" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/journals" />
             <option value="$PROJECT_DIR$/feature/plans" />
-            <option value="$PROJECT_DIR$/feature/training-logs" />
           </set>
         </option>
       </GradleProjectSettings>

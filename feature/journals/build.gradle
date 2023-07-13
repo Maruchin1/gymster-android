@@ -1,0 +1,14 @@
+plugins {
+    id 'com.android.library'
+    id 'gymster.android-conventions'
+    id 'gymster.compose-conventions'
+}
+
+android {
+    namespace 'com.maruchin.feature.journals'
+}
+
+dependencies {
+    implementation project(':data:journal')
+    implementation project(':core:ui')
+}

@@ -1,35 +1,36 @@
 package com.maruchin.data.training.model
 
-import com.maruchin.core.model.ID
 import com.maruchin.data.plan.model.Plan
 import com.maruchin.data.plan.model.samplePlan
+import java.util.UUID
 
 data class Journal(
-    val id: ID = ID.random,
+    val id: String = UUID.randomUUID().toString(),
     val name: String,
     val planName: String,
-    val weeks: List<JournalWeek>,
-    val active: Boolean = false,
-    val currentWeekId: ID = weeks.first().id,
+    val weeksProgress: List<WeekProgress>,
 ) {
+
+    val fullName: String
+        get() = "$planName - $name"
 
     constructor(name: String, plan: Plan) : this(
         name = name,
         planName = plan.name,
-        weeks = plan.weeks.mapIndexed { index, week -> JournalWeek(index + 1, week.trainings) }
+        weeksProgress = plan.weeks.map { WeekProgress(it) }
     )
 }
 
-val sampleEmptyJournal = Journal(name = "Q1 2023", plan = samplePlan)
+val sampleEmptyJournal = Journal(name = "Q1/23", plan = samplePlan)
 
 val sampleCompleteJournal = sampleEmptyJournal.copy(
-    weeks = sampleEmptyJournal.weeks.map { week ->
+    weeksProgress = sampleEmptyJournal.weeksProgress.map { week ->
         week.copy(
-            days = week.days.map { day ->
+            trainingsProgress = week.trainingsProgress.map { day ->
                 day.copy(
-                    exercises = day.exercises.map { exercise ->
+                    exercisesProgress = day.exercisesProgress.map { exercise ->
                         exercise.copy(
-                            sets = exercise.sets.map { set ->
+                            setsProgress = exercise.setsProgress.map { set ->
                                 set.copy(weight = 22.5f, reps = 12)
                             }
                         )

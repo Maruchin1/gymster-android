@@ -3,7 +3,6 @@ package com.maruchin.feature.plans.plandetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maruchin.core.ui.requireId
 import com.maruchin.data.plan.repository.PlanRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +17,7 @@ internal class PlanDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     planRepository: PlanRepository,
 ) : ViewModel() {
-    private val planId = savedStateHandle.requireId("planId")
+    private val planId: String = requireNotNull(savedStateHandle["planId"])
     private val plan = planRepository.getById(planId).filterNotNull()
 
     val uiState: StateFlow<PlanDetailsUiState> = plan

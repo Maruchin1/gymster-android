@@ -3,12 +3,12 @@ package com.maruchin.data.training
 import android.content.Context
 import androidx.room.Room
 import com.maruchin.data.training.database.JournalDatabase
-import com.maruchin.data.training.repository.DefaultJournalSetRepository
+import com.maruchin.data.training.repository.DefaultSetProgressRepository
 import com.maruchin.data.training.repository.DefaultJournalRepository
-import com.maruchin.data.training.repository.DefaultJournalDayRepository
-import com.maruchin.data.training.repository.JournalSetRepository
+import com.maruchin.data.training.repository.DefaultTrainingProgressRepository
+import com.maruchin.data.training.repository.SetProgressRepository
 import com.maruchin.data.training.repository.JournalRepository
-import com.maruchin.data.training.repository.JournalDayRepository
+import com.maruchin.data.training.repository.TrainingProgressRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -25,10 +25,10 @@ internal interface DataJournalModule {
     fun journalRepository(impl: DefaultJournalRepository): JournalRepository
 
     @Binds
-    fun journalDayRepository(impl: DefaultJournalDayRepository): JournalDayRepository
+    fun trainingProgressRepository(impl: DefaultTrainingProgressRepository): TrainingProgressRepository
 
     @Binds
-    fun journalSetRepository(impl: DefaultJournalSetRepository): JournalSetRepository
+    fun setProgressRepository(impl: DefaultSetProgressRepository): SetProgressRepository
 
     companion object {
 
@@ -46,15 +46,15 @@ internal interface DataJournalModule {
         fun journalDao(database: JournalDatabase) = database.journalDao()
 
         @Provides
-        fun weekDao(database: JournalDatabase) = database.weekDao()
+        fun weekDao(database: JournalDatabase) = database.weekProgressDao()
 
         @Provides
-        fun dayDao(database: JournalDatabase) = database.dayDao()
+        fun dayDao(database: JournalDatabase) = database.trainingProgressDao()
 
         @Provides
-        fun exerciseDao(database: JournalDatabase) = database.exerciseDao()
+        fun exerciseDao(database: JournalDatabase) = database.exerciseProgressDao()
 
         @Provides
-        fun setDao(database: JournalDatabase) = database.setDao()
+        fun setDao(database: JournalDatabase) = database.setProgressDao()
     }
 }

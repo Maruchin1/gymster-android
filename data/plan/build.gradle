@@ -8,7 +8,3 @@ plugins {
 android {
     namespace 'com.maruchin.data.plan'
 }
-
-dependencies {
-    api project(':core:model')
-}
