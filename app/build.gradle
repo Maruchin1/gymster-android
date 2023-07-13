@@ -3,6 +3,8 @@ plugins {
     id 'gymster.android-conventions'
     id 'gymster.compose-conventions'
     id 'gymster.room-conventions'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.appdistribution'
 }
 
 android {
@@ -17,6 +19,15 @@ android {
             useSupportLibrary true
         }
     }
+    buildTypes {
+        release {
+            firebaseAppDistribution {
+                artifactType = "APK"
+                serviceCredentialsFile = "./app/google-service-account.json"
+                testers = "marcinpk.mp@gmail.com"
+            }
+        }
+    }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -29,4 +40,6 @@ dependencies {
     implementation project(':feature:plans')
     implementation project(':data:journal')
     implementation project(':core:ui')
+
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
 }
