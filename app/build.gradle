@@ -38,8 +38,12 @@ android {
 dependencies {
     implementation project(':feature:journals')
     implementation project(':feature:plans')
+    implementation project(':feature:diet')
     implementation project(':data:journal')
     implementation project(':core:ui')
 
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
+    implementation "com.google.firebase:firebase-config-ktx"
+    implementation "com.google.firebase:firebase-storage-ktx"
+    implementation 'com.google.code.gson:gson:2.10.1'
 }

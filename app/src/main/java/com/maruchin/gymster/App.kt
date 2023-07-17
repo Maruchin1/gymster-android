@@ -5,7 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -20,12 +20,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.maruchin.feature.diet.ROUTE_DIET
+import com.maruchin.feature.diet.dietGraph
+import com.maruchin.feature.diet.navigateToDiet
 import com.maruchin.feature.journals.ROUTE_JOURNALS
-import com.maruchin.feature.plans.plansGraph
-import com.maruchin.feature.plans.navigateToPlans
 import com.maruchin.feature.journals.navigateToTrainingLog
 import com.maruchin.feature.journals.trainingLogGraph
-import com.maruchin.feature.plans.ROUTE_PLANS
 
 @Composable
 internal fun App() {
@@ -53,7 +53,7 @@ internal fun App() {
                         Icon(imageVector = Icons.Default.FitnessCenter, contentDescription = null)
                     },
                     label = {
-                        Text(text = "Treningi")
+                        Text(text = "Trening")
                     },
                     selected = isRouteSelected(ROUTE_JOURNALS),
                     onClick = {
@@ -62,22 +62,20 @@ internal fun App() {
                 )
                 NavigationBarItem(
                     icon = {
-                        Icon(imageVector = Icons.Default.List, contentDescription = null)
-                    },
-                    label = {
-                        Text(text = "Plany")
-                    },
-                    selected = isRouteSelected(ROUTE_PLANS),
-                    onClick = {
-                        navController.navigateToPlans(createNavOptions())
-                    }
-                )
-                NavigationBarItem(
-                    icon = {
                         Icon(imageVector = Icons.Default.Fastfood, contentDescription = null)
                     },
                     label = {
-                        Text(text = "Diety")
+                        Text(text = "Dieta")
+                    },
+                    selected = isRouteSelected(ROUTE_DIET),
+                    onClick = { navController.navigateToDiet(createNavOptions()) },
+                )
+                NavigationBarItem(
+                    icon = {
+                        Icon(imageVector = Icons.Default.ShoppingBag, contentDescription = null)
+                    },
+                    label = {
+                        Text(text = "Sklep")
                     },
                     selected = false,
                     onClick = { },
@@ -101,7 +99,7 @@ internal fun App() {
             modifier = Modifier.padding(padding)
         ) {
             trainingLogGraph(navController)
-            plansGraph(navController)
+            dietGraph(navController)
         }
     }
 }

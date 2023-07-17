@@ -15,9 +15,11 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/data/diet" />
             <option value="$PROJECT_DIR$/data/journal" />
             <option value="$PROJECT_DIR$/data/plan" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/diet" />
             <option value="$PROJECT_DIR$/feature/journals" />
             <option value="$PROJECT_DIR$/feature/plans" />
           </set>
