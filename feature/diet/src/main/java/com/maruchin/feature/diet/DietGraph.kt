@@ -7,6 +7,8 @@ import androidx.navigation.navigation
 import com.maruchin.feature.diet.dietdetails.dietDetailsScreen
 import com.maruchin.feature.diet.dietdetails.navigateToDietDetails
 import com.maruchin.feature.diet.dietlist.dietListScreen
+import com.maruchin.feature.diet.recipedetails.navigateToRecipeDetails
+import com.maruchin.feature.diet.recipedetails.recipeDetailsScreen
 
 fun NavGraphBuilder.dietGraph(navController: NavController) {
     navigation(startDestination = ROUTE_DIET_LIST, route = ROUTE_DIET) {
@@ -16,6 +18,14 @@ fun NavGraphBuilder.dietGraph(navController: NavController) {
             }
         )
         dietDetailsScreen(
+            onBack = {
+                navController.navigateUp()
+            },
+            onOpenRecipe = { diet, recipe ->
+                navController.navigateToRecipeDetails(diet.id, recipe.name)
+            }
+        )
+        recipeDetailsScreen(
             onBack = {
                 navController.navigateUp()
             }

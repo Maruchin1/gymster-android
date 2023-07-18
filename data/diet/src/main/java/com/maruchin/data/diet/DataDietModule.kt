@@ -11,4 +11,7 @@ internal interface DataDietModule {
 
     @Binds
     fun dietRepository(impl: DietDefaultRepository): DietRepository
+
+    @Binds
+    fun recipeRepository(impl: RecipeDefaultRepository): RecipeRepository
 }

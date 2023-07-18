@@ -1,7 +1,7 @@
 package com.maruchin.feature.diet.dietlist
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -12,25 +12,31 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.maruchin.core.ui.LightAndDarkPreview
 import com.maruchin.core.ui.content.LoadingContent
 import com.maruchin.core.ui.theme.GymsterTheme
 import com.maruchin.data.diet.Diet
 import com.maruchin.data.diet.sampleDiets
 import com.maruchin.feature.diet.R
+import java.net.URL
 
 @Composable
 internal fun DietListScreen(state: DietListUiState, onOpenDiet: (Diet) -> Unit) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
-            TopAppBar()
+            TopAppBar(scrollBehavior = scrollBehavior)
         }
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
@@ -39,6 +45,7 @@ internal fun DietListScreen(state: DietListUiState, onOpenDiet: (Diet) -> Unit) 
 
                 is DietListUiState.Success -> DietListContent(
                     diets = state.diets,
+                    nestedScrollConnection = scrollBehavior.nestedScrollConnection,
                     onOpenDiet = onOpenDiet
                 )
             }
@@ -47,55 +54,66 @@ internal fun DietListScreen(state: DietListUiState, onOpenDiet: (Diet) -> Unit) 
 }
 
 @Composable
-private fun TopAppBar() {
+private fun TopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
     TopAppBar(
         title = {
-            Text(text = "Dieta")
-        }
+            Text(text = stringResource(R.string.diet))
+        },
+        scrollBehavior = scrollBehavior,
     )
 }
 
 @Composable
-private fun DietListContent(diets: List<Diet>, onOpenDiet: (Diet) -> Unit) {
-    LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+private fun DietListContent(
+    diets: List<Diet>,
+    nestedScrollConnection: NestedScrollConnection,
+    onOpenDiet: (Diet) -> Unit
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.nestedScroll(nestedScrollConnection)
+    ) {
         items(diets) { diet ->
-            DietItem(name = diet.name, onOpen = { onOpenDiet(diet) })
+            DietItem(
+                cover = diet.cover,
+                name = diet.name,
+                onOpen = { onOpenDiet(diet) }
+            )
         }
     }
 }
 
 @Composable
-private fun DietItem(name: String, onOpen: () -> Unit) {
+private fun DietItem(cover: URL, name: String, onOpen: () -> Unit) {
     OutlinedCard(
         onClick = onOpen,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
-        Image(
-            painter = painterResource(R.drawable.diet_cover),
-            contentDescription = null
+        AsyncImage(
+            model = cover.toString(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(3f / 4f)
         )
         Text(
             text = name,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
         )
     }
 }
 
 @LightAndDarkPreview
 @Composable
-private fun MyDietsScreenPreview(@PreviewParameter(UiStateProvider::class) state: DietListUiState) {
+private fun MyDietsScreenPreview() {
     GymsterTheme {
-        DietListScreen(state = state, onOpenDiet = {})
+        DietListScreen(state = DietListUiState.Success(diets = sampleDiets), onOpenDiet = {})
     }
-}
-
-private class UiStateProvider : PreviewParameterProvider<DietListUiState> {
-    override val values = sequenceOf(
-        DietListUiState.Loading,
-        DietListUiState.Success(diets = sampleDiets)
-    )
 }

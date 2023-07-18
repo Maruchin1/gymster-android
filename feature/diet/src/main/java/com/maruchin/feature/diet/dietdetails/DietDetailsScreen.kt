@@ -1,13 +1,8 @@
 package com.maruchin.feature.diet.dietdetails
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -16,30 +11,41 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.maruchin.core.ui.LightAndDarkPreview
 import com.maruchin.core.ui.button.BackButton
 import com.maruchin.core.ui.content.LoadingContent
 import com.maruchin.core.ui.theme.GymsterTheme
+import com.maruchin.data.diet.Diet
 import com.maruchin.data.diet.Group
 import com.maruchin.data.diet.Macro
 import com.maruchin.data.diet.Recipe
 import com.maruchin.data.diet.sampleDiets
 import com.maruchin.feature.diet.R
+import com.maruchin.feature.diet.common.RecipeItem
 import com.maruchin.feature.diet.format
+import java.net.URL
 
 @Composable
-internal fun DietDetailsScreen(state: DietDetailsUiState, onBack: () -> Unit) {
+internal fun DietDetailsScreen(
+    state: DietDetailsUiState,
+    onBack: () -> Unit,
+    onOpenRecipe: (Diet, Recipe) -> Unit
+) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
-            TopAppBar(onBack = onBack)
+            TopAppBar(scrollBehavior = scrollBehavior, onBack = onBack)
         }
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
@@ -47,8 +53,12 @@ internal fun DietDetailsScreen(state: DietDetailsUiState, onBack: () -> Unit) {
                 DietDetailsUiState.Loading -> LoadingContent()
 
                 is DietDetailsUiState.Success -> DietDetailsContent(
-                    name = state.diet.name,
+                    cover = state.diet.cover,
                     groups = state.diet.groups,
+                    nestedScrollConnection = scrollBehavior.nestedScrollConnection,
+                    onOpenRecipe = { recipe ->
+                        onOpenRecipe(state.diet, recipe)
+                    },
                 )
             }
         }
@@ -56,28 +66,34 @@ internal fun DietDetailsScreen(state: DietDetailsUiState, onBack: () -> Unit) {
 }
 
 @Composable
-private fun TopAppBar(onBack: () -> Unit) {
+private fun TopAppBar(scrollBehavior: TopAppBarScrollBehavior, onBack: () -> Unit) {
     TopAppBar(
         title = {
-            Text(text = "Dieta")
+            Text(text = stringResource(R.string.diet))
         },
         navigationIcon = {
             BackButton(onClick = onBack)
-        }
+        },
+        scrollBehavior = scrollBehavior,
     )
 }
 
 @Composable
-private fun DietDetailsContent(name: String, groups: List<Group>) {
-    LazyColumn {
+private fun DietDetailsContent(
+    cover: URL,
+    groups: List<Group>,
+    nestedScrollConnection: NestedScrollConnection,
+    onOpenRecipe: (Recipe) -> Unit,
+) {
+    LazyColumn(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
         item {
-            Text(
-                text = name,
-                style = MaterialTheme.typography.displaySmall,
-                textAlign = TextAlign.Center,
+            AsyncImage(
+                model = cover.toString(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 32.dp)
+                    .aspectRatio(3f / 4f)
             )
         }
         groups.forEach { group ->
@@ -85,12 +101,18 @@ private fun DietDetailsContent(name: String, groups: List<Group>) {
                 name = group.name,
                 macro = group.macro,
                 recipes = group.recipes,
+                onOpenRecipe = onOpenRecipe,
             )
         }
     }
 }
 
-private fun LazyListScope.GroupItem(name: String, macro: Macro, recipes: List<Recipe>) {
+private fun LazyListScope.GroupItem(
+    name: String,
+    macro: Macro,
+    recipes: List<Recipe>,
+    onOpenRecipe: (Recipe) -> Unit
+) {
     item {
         Divider()
         Text(
@@ -113,55 +135,13 @@ private fun LazyListScope.GroupItem(name: String, macro: Macro, recipes: List<Re
     recipes.forEachIndexed { index, recipe ->
         item {
             Divider()
-            DietItem(
-                isEven = index % 2 == 0,
+            RecipeItem(
+                index = index,
                 name = recipe.name,
                 macro = recipe.macro.format(),
                 ingredients = recipe.ingredients,
+                onClick = { onOpenRecipe(recipe) },
             )
-        }
-    }
-}
-
-@Composable
-private fun DietItem(isEven: Boolean, name: String, macro: String, ingredients: List<String>) {
-    val direction = if (isEven) LayoutDirection.Ltr else LayoutDirection.Rtl
-    CompositionLocalProvider(LocalLayoutDirection provides direction) {
-        Row(horizontalArrangement = if (isEven) Arrangement.Start else Arrangement.End) {
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                Column(modifier = Modifier.weight(2f)) {
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp)
-                    )
-                    Text(
-                        text = macro,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 12.dp)
-                    )
-                    Text(
-                        text = "SKŁADNIKI",
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp)
-                    )
-                    ingredients.forEach { ingredient ->
-                        Row(modifier = Modifier.padding(horizontal = 12.dp)) {
-                            Text(text = "- ")
-                            Text(
-                                text = ingredient,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-                Image(
-                    painter = painterResource(R.drawable.recipe_cover),
-                    contentDescription = null,
-                    modifier = Modifier.weight(2f)
-                )
-            }
         }
     }
 }
@@ -170,6 +150,10 @@ private fun DietItem(isEven: Boolean, name: String, macro: String, ingredients: 
 @Composable
 private fun DietDetailsScreenPreview() {
     GymsterTheme {
-        DietDetailsScreen(state = DietDetailsUiState.Success(sampleDiets[0]), onBack = {})
+        DietDetailsScreen(
+            state = DietDetailsUiState.Success(sampleDiets[0]),
+            onBack = {},
+            onOpenRecipe = { _, _ -> }
+        )
     }
 }

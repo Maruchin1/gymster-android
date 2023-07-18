@@ -1,15 +1,19 @@
 package com.maruchin.data.diet
 
+import java.net.URL
+
 data class Diet(
     val id: String,
     val name: String,
+    val cover: URL,
     val groups: List<Group>,
 )
 
 val sampleDiets = listOf(
     Diet(
         id = "man_1",
-        name = "Standard 1.0 przepisy klasyczne",
+        name = "Elastyczna dieta \"Standard 1.0\"",
+        cover = URL("https://dailyeffect.pl/wp-content/uploads/2022/05/PRZEPISY-KLASYCZNE-SIMONTE-2-2.jpg"),
         groups = listOf(
             Group(
                 name = "Grupa 1",
@@ -71,12 +75,14 @@ val sampleDiets = listOf(
     ),
     Diet(
         id = "man_2",
-        name = "Standard 2.0 kuchnie świata",
+        name = "Elastyczna dieta \"Standard 2.0\"",
+        cover = URL("https://dailyeffect.pl/wp-content/uploads/2022/12/PRODUKTY-OKLADKI-NA-STRONE-32-2.png"),
         groups = emptyList(),
     ),
     Diet(
         id = "man_3",
-        name = "Standard 3.0 jesienno zimowe",
+        name = "Elastyczna dieta \"Standard 3.0\"",
+        cover = URL("https://dailyeffect.pl/wp-content/uploads/2022/10/JESIENNO-ZIMOWE-SIMONTE-4-2.jpg"),
         groups = emptyList(),
     )
 )
