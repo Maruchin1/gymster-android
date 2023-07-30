@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="diet">Dieta</string>
+    <string name="steps">Przygotowanie</string>
+    <string name="tips">Wskazówki</string>
+    <string name="ingredients">Składniki</string>
+    <string name="message_recipe_added_to_planned">Przepis dodany do menu</string>
+    <string name="message_recipe_removed_from_planned">Przepis usunięty z menu</string>
+</resources>

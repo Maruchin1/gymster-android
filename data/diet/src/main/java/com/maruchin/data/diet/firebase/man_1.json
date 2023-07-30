@@ -1,0 +1,86 @@
+{
+  "name": "Elastyczna dieta \"Standard 1.0\"",
+  "coverUrl": "https://dailyeffect.pl/wp-content/uploads/2022/05/PRZEPISY-KLASYCZNE-SIMONTE-2-2.jpg",
+  "groups": [
+    {
+      "name": "Grupa 1",
+      "macro": {
+        "calories": 500,
+        "protein": 35,
+        "fat": 10,
+        "carbs": 70
+      },
+      "recipes": [
+        {
+          "name": "Kanapki z tuÅ„czykiem i awokado",
+          "macro": {
+            "calories": 500,
+            "protein": 36,
+            "fat": 10,
+            "carbs": 67
+          },
+          "ingredients": [
+            {
+              "name": "Ulubione pieczywo",
+              "amount": 100
+            },
+            {
+              "name": "Dojżałe awokado",
+              "amount": 50
+            },
+            {
+              "name": "Tuńczyk w sosie własnym",
+              "amount": 120
+            },
+            {
+              "name": "Ulubione warzywa (pomidoer, cebula, ogórek)"
+            },
+            {
+              "name": "Ulubione przyprawy (sól, pieprz)"
+            }
+          ],
+          "steps": [
+            "DojrzaÅ‚e awokado rozgnieÄ‡ widelcem z odrobinÄ… soli i piperzu",
+            "Pozsmaruj pastÄ… pieczywo i naÅ‚Ã³Å¼ tuÅ„czyka wraz z pomidorami"
+          ],
+          "tips": [
+            "Upewnij siÄ™ Å¼e kupujesz tuÅ„czyka w sosie wÅ‚asnym, a nie w oleju!. TuÅ„czyk w oleju zawiera dodatkowe kalorie, a dodany olej jest przewaÅ¼nie sÅ‚abej jakoÅ›ci."
+          ]
+        },
+        {
+          "name": "Kanapki z szynkÄ… i serem",
+          "macro": {
+            "calories": 498,
+            "protein": 33,
+            "fat": 12,
+            "carbs": 63
+          },
+          "ingredients": [
+            {
+              "name": "Ulubione pieczywo",
+              "amount": 50
+            },
+            {
+              "name": "Chuda szynka",
+              "amount": 50
+            },
+            {
+              "name": "Ser żółty",
+              "amount": 50
+            },
+            {
+              "name": "Ulubione warzywa (sałata, ogórek, pomidor)"
+            }
+          ],
+          "steps": [
+            "NaÅ‚Ã³Å¼ na pieczywo wszystkie skÅ‚adniki"
+          ],
+          "tips": [
+            "Zamiast tradycyjnych kanapek moÅ¼esz zrobiÄ‡ tosty. Wystarczy Å¼e wÅ‚Ã³Å¼ysz do opiekacza pieczywo bez warzyw, a warzywa podasz osobno w formie saÅ‚atki.",
+            "KupujÄ…c szynkÄ™ upewnij siÄ™ Å¼e ma minimum 90% miÄ™sa (najlepiej +100%) i nie wiÄ™cej niÅ¼ 3g tÅ‚uszczu na 100g produktu."
+          ]
+        }
+      ]
+    }
+  ]
+}

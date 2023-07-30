@@ -4,5 +4,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface RecipeRepository {
 
-    fun getByDietAndName(dietId: String, name: String): Flow<Recipe?>
+    fun getById(id: String): Flow<Recipe?>
+
+    fun getPlanned(): Flow<List<Recipe>>
+
+    suspend fun addToPlanned(id: String)
+
+    suspend fun removeFromPlanned(id: String)
 }

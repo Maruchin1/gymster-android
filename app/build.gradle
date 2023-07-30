@@ -36,9 +36,11 @@ android {
 }
 
 dependencies {
+    implementation project(':feature:bottomnav')
     implementation project(':feature:journals')
     implementation project(':feature:plans')
-    implementation project(':feature:diet')
+    implementation project(':feature:recipes')
+    implementation project(':feature:menu')
     implementation project(':data:journal')
     implementation project(':core:ui')
 

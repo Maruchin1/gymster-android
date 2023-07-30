@@ -1,0 +1,15 @@
+plugins {
+    id 'com.android.library'
+    id 'gymster.android-conventions'
+    id 'gymster.compose-conventions'
+}
+
+android {
+    namespace 'com.maruchin.gymster.feature.bottomnav'
+}
+
+dependencies {
+    implementation project(':core:ui')
+    implementation project(':feature:recipes')
+    implementation project(':feature:menu')
+}
